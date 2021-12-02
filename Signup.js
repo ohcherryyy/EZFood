@@ -88,8 +88,6 @@ export function SignupScreen({ navigation, route }) {
           Confirm
         </Text>
         </View>
-        
-        
 
         <View style={loginStyles.modeSwitchContainer}>
           <Text>
