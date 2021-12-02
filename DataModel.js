@@ -1,3 +1,4 @@
+import { InfoCircleFilled } from "@ant-design/icons";
 import { useLinkTo } from "@react-navigation/native";
 import { initializeApp, getApps } from "firebase/app";
 import {
@@ -9,6 +10,7 @@ import {
   doc,
   addDoc,
   setDoc,
+  updateDoc
 } from "firebase/firestore";
 import { firebaseConfig } from "./Secrets";
 
@@ -93,11 +95,22 @@ class DataModel {
     let newUser = {
       displayName: authUser.providerData[0].displayName,
       authId: authUser.uid,
+      // budget: info.budget,
+      // breakfast:info.breakfast,
+      // lunch:info.lunch,
+      // dinner:info.dinner
     };
     const userDoc = await addDoc(collection(db, "users"), newUser);
     newUser.key = userDoc.id;
     this.notifyUserListeners();
     return newUser;
+  }
+
+  async updateItem(key,info) {
+    await updateDoc(doc(db, "users", key), info
+    
+    );
+    this.notifyUserListeners();
   }
 }
 

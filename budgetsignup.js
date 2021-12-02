@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Alert } from "react-native";
-import { CheckCircleOutlined } from "@ant-design/icons";
 import {
   TextInput,
   Text,
@@ -16,32 +15,34 @@ import {
   updateProfile,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import Password from "antd/lib/input/Password";
 
-export function SignupScreen({ navigation, route }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confmpsw, setconfirm] = useState("");
+export function SignupBudgetScreen({ navigation, route }) {
   const dataModel = getDataModel();
+  const { currentUserId } = route.params;
+
   const auth = getAuth();
   const [displayName, setDisplayName] = useState("");
+  const [budget, setBudget] = useState("");
+  const [breakfast, setBreak] = useState("");
+  const [lunch, setLunch] = useState("");
+  const [dinner, setDinner] = useState("");
 
   return (
     <View style={loginStyles.body}>
       <View style={loginStyles.loginContainer}>
         <View style={loginStyles.loginRow}>
           <View style={loginStyles.loginLabelContainer}>
-            <Text style={loginStyles.loginLabelText}>Email: </Text>
+            <Text style={loginStyles.loginLabelText}>UserName: </Text>
           </View>
           <View style={loginStyles.loginInputContainer}>
             <TextInput
               style={loginStyles.loginInputBox}
-              placeholder="enter email address"
+              placeholder="enter username"
               autoCapitalize="none"
               spellCheck={false}
-              value={email}
+              value={displayName}
               onChangeText={(text) => {
-                setEmail(text);
+                setDisplayName(text);
               }}
             />
           </View>
@@ -49,16 +50,15 @@ export function SignupScreen({ navigation, route }) {
 
         <View style={loginStyles.loginRow}>
           <View style={loginStyles.loginLabelContainer}>
-            <Text style={loginStyles.loginLabelText}>Password: </Text>
+            <Text style={loginStyles.loginLabelText}>Monthly Budget: </Text>
           </View>
           <View style={loginStyles.loginInputContainer}>
             <TextInput
               style={loginStyles.loginInputBox}
-              placeholder="enter password"
-              secureTextEntry={true}
-              value={password}
+              placeholder="enter budget"
+              value={budget}
               onChangeText={(text) => {
-                setPassword(text);
+                setBudget(text);
               }}
             />
           </View>
@@ -66,67 +66,70 @@ export function SignupScreen({ navigation, route }) {
 
         <View style={loginStyles.loginRow}>
           <View style={loginStyles.loginLabelContainer}>
-            <Text style={loginStyles.loginLabelText}>Confirm Password: </Text>
+            <Text style={loginStyles.loginLabelText}>Breakfast: </Text>
           </View>
           <View style={loginStyles.loginInputContainer}>
             <TextInput
               style={loginStyles.loginInputBox}
-              placeholder="Confirm password"
-              secureTextEntry={true}
-              value={confmpsw}
+              placeholder="enter breakfast ratio"
+              autoCapitalize="none"
+              spellCheck={false}
+              value={breakfast}
               onChangeText={(text) => {
-                setconfirm(text);
+                setBreak(text);
               }}
             />
           </View>
-          <Text
-          style={
-            password === confmpsw
-              ? loginStyles.loginLabelTextRight
-              : loginStyles.loginLabelTextWrong
-          }
-        >
-          Confirm
-        </Text>
         </View>
-        
-        
 
-        <View style={loginStyles.modeSwitchContainer}>
-          <Text>
-            Existing user?
-            <Text
-              onPress={() => {
-                setMode("login");
+        <View style={loginStyles.loginRow}>
+          <View style={loginStyles.loginLabelContainer}>
+            <Text style={loginStyles.loginLabelText}>Lunch: </Text>
+          </View>
+          <View style={loginStyles.loginInputContainer}>
+            <TextInput
+              style={loginStyles.loginInputBox}
+              placeholder="enter lunch ratio"
+              autoCapitalize="none"
+              spellCheck={false}
+              value={lunch}
+              onChangeText={(text) => {
+                setLunch(text);
               }}
-              style={{ color: "blue" }}
-            >
-              {" "}
-              Log In{" "}
-            </Text>
-            instead!
-          </Text>
+            />
+          </View>
+        </View>
+
+        <View style={loginStyles.loginRow}>
+          <View style={loginStyles.loginLabelContainer}>
+            <Text style={loginStyles.loginLabelText}>Dinner: </Text>
+          </View>
+          <View style={loginStyles.loginInputContainer}>
+            <TextInput
+              style={loginStyles.loginInputBox}
+              placeholder="enter dinner ratio"
+              autoCapitalize="none"
+              spellCheck={false}
+              value={dinner}
+              onChangeText={(text) => {
+                setDinner(text);
+              }}
+            />
+          </View>
         </View>
 
         <View style={loginStyles.loginButtonRow}>
           <Button
-            title={"Next"}
-            onPress={async () => {
-              try {
-                const credential = await createUserWithEmailAndPassword(
-                  auth,
-                  email,
-                  password
-                );
-                const authUser = credential.user;
-                // await updateProfile(authUser, { displayName: displayName });
-                const user = await dataModel.getUserForAuthUser(authUser);
-                navigation.navigate("Budget", { currentUserId:user.key});
-              } catch (error) {
-                Alert.alert("Sign Up Error", error.message, [{ text: "OK" }]);
-              }
-              setEmail("");
-              setPassword("");
+            title={"Sign up"}
+            onPress={async() => {
+                let info={
+                    displayName: displayName,
+                    budget: budget,
+                    breakfast:breakfast,
+                    lunch:lunch,
+                    dinner:dinner
+                }
+                dataModel.updateItem(currentUserId, info)
             }}
           />
         </View>
@@ -162,14 +165,6 @@ const loginStyles = StyleSheet.create({
   },
   loginLabelText: {
     fontSize: 18,
-  },
-  loginLabelTextRight: {
-    fontSize: 18,
-    color: "green",
-  },
-  loginLabelTextWrong: {
-    fontSize: 18,
-    color: "grey",
   },
   loginInputContainer: {
     flex: 0.6,
