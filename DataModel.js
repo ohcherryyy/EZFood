@@ -26,8 +26,10 @@ class DataModel {
   constructor() {
     this.users = [];
     this.userListeners = [];
-    this.chatListeners = [];
+    this.subscribers = [];
+    this.restsearchlist=[]
     this.initUsersOnSnapshot();
+    this.initResOnSnapshot();
   }
 
   addUserListener(callbackFunction) {
@@ -111,6 +113,35 @@ class DataModel {
     
     );
     this.notifyUserListeners();
+  }
+
+  subscribeToUpdates(callback) {
+    console.log("new subscriber: ", callback);
+    this.subscribers.push(callback);
+  }
+
+  updateSubscribers() {
+    for (let sub of this.subscribers) {
+      sub(); // just tell them there's an update
+    }
+  }
+
+  initResOnSnapshot() {
+    onSnapshot(collection(db, "restaurants"), (qSnap) => {
+      if (qSnap.empty) return;
+      let resList = [];
+      qSnap.forEach((docSnap) => {
+        let res = docSnap.data();
+        res.key = docSnap.id;
+        resList.push(res);
+      });
+      this.restsearchlist = resList;
+      this.updateSubscribers();
+    });
+  }
+
+  getRes(){
+    return this.restsearchlist
   }
 }
 

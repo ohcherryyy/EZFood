@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert } from "react-native";
-import { CheckCircleOutlined } from "@ant-design/icons";
+import CheckCircleOutlined from "@ant-design/icons";
 import {
   TextInput,
   Text,
@@ -16,7 +16,6 @@ import {
   updateProfile,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import Password from "antd/lib/input/Password";
 
 export function SignupScreen({ navigation, route }) {
   const [email, setEmail] = useState("");

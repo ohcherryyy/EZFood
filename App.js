@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {LoginScreen} from "./Login"
 import { SignupScreen } from './Signup';
 import { SignupBudgetScreen } from './budgetsignup';
+import { RestaurantScreen } from './Restaurant';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +22,7 @@ function App() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="Budget" component={SignupBudgetScreen} />
+        <Stack.Screen name="Restaurant" component={RestaurantScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

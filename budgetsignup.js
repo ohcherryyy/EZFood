@@ -15,6 +15,7 @@ import {
   updateProfile,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
+import { NavigationHelpersContext } from "@react-navigation/native";
 
 export function SignupBudgetScreen({ navigation, route }) {
   const dataModel = getDataModel();
@@ -130,6 +131,7 @@ export function SignupBudgetScreen({ navigation, route }) {
                     dinner:dinner
                 }
                 dataModel.updateItem(currentUserId, info)
+                navigation.navigate("restaurant",{userId: currentUserId})
             }}
           />
         </View>
