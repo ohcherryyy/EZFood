@@ -28,8 +28,10 @@ class DataModel {
     this.userListeners = [];
     this.subscribers = [];
     this.restsearchlist=[]
+    this.recipesearchlist=[]
     this.initUsersOnSnapshot();
     this.initResOnSnapshot();
+    this.initRecipeOnSnapshot();
   }
 
   addUserListener(callbackFunction) {
@@ -141,6 +143,24 @@ class DataModel {
 
   getRes(){
     return this.restsearchlist
+  }
+
+  initRecipeOnSnapshot() {
+    onSnapshot(collection(db, "recipes"), (qSnap) => {
+      if (qSnap.empty) return;
+      let recList = [];
+      qSnap.forEach((docSnap) => {
+        let rec = docSnap.data();
+        rec.key = docSnap.id;
+        recList.push(rec);
+      });
+      this.recipesearchlist = recList;
+      this.updateSubscribers();
+    });
+  }
+
+  getRecipes(){
+    return this.recipesearchlist
   }
 }
 

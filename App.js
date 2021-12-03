@@ -9,6 +9,7 @@ import { SignupScreen } from './Signup';
 import { SignupBudgetScreen } from './budgetsignup';
 import { RestaurantScreen } from './Restaurant';
 import { RecipeCheckScreen } from './recipeCheck';
+import { RecipeScreen } from './Recipe';
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -17,7 +18,7 @@ function HomeTabs() {
   return (
     <Tab.Navigator>
         <Tab.Screen name="Restaurant" component={RestaurantScreen} />
-        <Tab.Screen name="recipeCheck" component={RecipeCheckScreen} />
+        <Tab.Screen name="Recipe" component={RecipeScreen} />
     </Tab.Navigator>
   );
 }
@@ -36,6 +37,7 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="Budget" component={SignupBudgetScreen} />
+        <Tab.Screen name="recipeCheck" component={RecipeCheckScreen} />
     </Stack.Navigator>
     </NavigationContainer>
   );
