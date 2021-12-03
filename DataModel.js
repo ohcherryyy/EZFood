@@ -8,9 +8,11 @@ import {
   orderBy,
   onSnapshot,
   doc,
+  getDoc,
   addDoc,
   setDoc,
-  updateDoc
+  updateDoc,
+  getAuth
 } from "firebase/firestore";
 import { firebaseConfig } from "./Secrets";
 
@@ -21,6 +23,8 @@ if (getApps().length == 0) {
 const db = initializeFirestore(app, {
   useFetchStreams: false,
 });
+
+// const auth = getAuth(); 
 
 class DataModel {
   constructor() {
@@ -100,11 +104,18 @@ class DataModel {
 
   getUserForID(id) {
     for (let u of this.users) {
-      if (u.key === id) {
-        return u;
+      if (u.authId === id) {
+        return u.key;
       }
     }
     return null;
+  }
+
+  async getCurrentUserDisplayName(userid) {
+    // const authUser = auth.currentUser;
+    const userDocSnap = await getDoc(doc(db, 'users', userid));
+    const user = userDocSnap.data();
+    return user.displayName;
   }
 
   async getUserForAuthUser(authUser) {

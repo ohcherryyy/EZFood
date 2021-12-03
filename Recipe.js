@@ -15,8 +15,8 @@ import { getDataModel } from "./DataModel";
 
 export function RecipeScreen({ navigation, route }) {
   const dataModel = getDataModel();
-  //   const { userId } = route.params;
-  //   const userkey = dataModel.getUserForID(userId);
+    const { userId } = route.params;
+    const userkey = dataModel.getUserForID(userId);
   const [search, setSearch] = useState("");
   const [reclist, setReclist] = useState(dataModel.getRecipes());
 
