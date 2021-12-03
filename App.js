@@ -17,7 +17,8 @@ import { ProfileScreen } from './Profile';
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
-function HomeTabs() {
+function HomeTabs({route}) {
+  const userId=route.params.currentUserId
   return (
     <Tab.Navigator
       activeColor="#1a0ec2"
@@ -28,6 +29,7 @@ function HomeTabs() {
         <Tab.Screen
           name="Restaurant"
           component={RestaurantScreen}
+          initialParams={{currentUserId:userId}}
           options={{
             tabBarLabel: 'Recipe',
             tabBarIcon: ({ color }) => (
@@ -38,6 +40,7 @@ function HomeTabs() {
         <Tab.Screen
           name="Recipe"
           component={RecipeScreen}
+          initialParams={{currentUserId:userId}}
           options={{
             tabBarLabel: 'Recipe',
             tabBarIcon: ({ color }) => (
@@ -48,6 +51,7 @@ function HomeTabs() {
         <Tab.Screen
           name="Favorite"
           component={FavoriteScreen}
+          initialParams={{currentUserId:userId}}
           options={{
             tabBarLabel: 'Favorite',
             tabBarIcon: ({ color }) => (
@@ -58,10 +62,11 @@ function HomeTabs() {
         <Tab.Screen
           name="Profile"
           component={ProfileScreen}
+          initialParams={{currentUserId:userId}}
           options={{
             tabBarLabel: 'Profile',
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="heart" color={color} size={26} />
+              <MaterialCommunityIcons name="account" color={color} size={26} />
             ),
           }}
         />
