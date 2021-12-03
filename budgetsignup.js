@@ -131,7 +131,7 @@ export function SignupBudgetScreen({ navigation, route }) {
                     dinner:dinner
                 }
                 dataModel.updateItem(currentUserId, info)
-                navigation.navigate("Restaurant",{userId: currentUserId})
+                navigation.navigate('Home', { params: { currentUserId: currentUserId }, screen: 'Restaurant' });
             }}
           />
         </View>

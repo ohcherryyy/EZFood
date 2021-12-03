@@ -10,15 +10,50 @@ import { SignupBudgetScreen } from './budgetsignup';
 import { RestaurantScreen } from './Restaurant';
 import { RecipeCheckScreen } from './recipeCheck';
 import { RecipeScreen } from './Recipe';
+import { FavoriteScreen } from './Favorite';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
 function HomeTabs() {
   return (
-    <Tab.Navigator>
-        <Tab.Screen name="Restaurant" component={RestaurantScreen} />
-        <Tab.Screen name="Recipe" component={RecipeScreen} />
+    <Tab.Navigator
+      activeColor="#1a0ec2"
+      inactiveColor="#f0edf6"
+      barStyle={{ backgroundColor: '#A2D8EF' }}
+      shifting={true}
+    >
+        <Tab.Screen
+          name="Restaurant"
+          component={RestaurantScreen}
+          options={{
+            tabBarLabel: 'Recipe',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="silverware" color={color} size={26} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Recipe"
+          component={RecipeScreen}
+          options={{
+            tabBarLabel: 'Recipe',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="chef-hat" color={color} size={26} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Favorite"
+          component={FavoriteScreen}
+          options={{
+            tabBarLabel: 'Favorite',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="heart" color={color} size={26} />
+            ),
+          }}
+        />
     </Tab.Navigator>
   );
 }
@@ -42,12 +77,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-// function App() {
-//   return (
-//     <NavigationContainer>
-//     </NavigationContainer>
-//   );
-// }
-
-// export default App;
