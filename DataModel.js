@@ -26,12 +26,36 @@ class DataModel {
   constructor() {
     this.users = [];
     this.userListeners = [];
+    this.userSnapshotUnsub = undefined; 
     this.subscribers = [];
     this.restsearchlist=[]
     this.recipesearchlist=[]
     this.initUsersOnSnapshot();
     this.initResOnSnapshot();
     this.initRecipeOnSnapshot();
+  }
+
+  initOnAuth() {
+    if (this.userSnapshotUnsub) {
+      this.userSnapshotUnsub();
+    }
+    this.userSnapshotUnsub = onSnapshot(collection(db, 'users'), qSnap => {
+      let updatedUsers = [];
+      qSnap.forEach(docSnap => {
+        let user = docSnap.data();
+        user.key = docSnap.id;
+        updatedUsers.push(user);
+      });
+      this.users = updatedUsers;
+      this.notifyUserListeners();
+    });
+  }
+
+  disconnectOnSignout() {
+    if (this.userSnapshotUnsub) {
+      this.userSnapshotUnsub();
+      this.userSnapshotUnsub = undefined;
+    }
   }
 
   addUserListener(callbackFunction) {

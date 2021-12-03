@@ -35,9 +35,7 @@ export function RestaurantScreen({ navigation, route }) {
           renderItem={({ item }) => {
             return (
               <View style={styles.listItem}>
-                <Text style={styles.listItemText}>{item.name}</Text>
-                
-                
+                <Text style={styles.listItemText}>{item.name}</Text>    
               </View>
             );
           }}

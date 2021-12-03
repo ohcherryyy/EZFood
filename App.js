@@ -12,6 +12,7 @@ import { RecipeCheckScreen } from './recipeCheck';
 import { RecipeScreen } from './Recipe';
 import { FavoriteScreen } from './Favorite';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ProfileScreen } from './Profile';
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -49,6 +50,16 @@ function HomeTabs() {
           component={FavoriteScreen}
           options={{
             tabBarLabel: 'Favorite',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="heart" color={color} size={26} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            tabBarLabel: 'Profile',
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="heart" color={color} size={26} />
             ),

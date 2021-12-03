@@ -15,6 +15,7 @@ import {
   updateProfile,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 export function LoginScreen({ navigation, route }) {
@@ -22,6 +23,20 @@ export function LoginScreen({ navigation, route }) {
   const [password, setPassword] = useState("");
   const dataModel = getDataModel();
   const auth = getAuth();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (authUser) => {
+      if (authUser) {
+        dataModel.initOnAuth();
+        navigation.navigate("Home", {
+          params: { currentUserId: authUser.uid },
+          screen: "Restaurant",
+        });
+      } else {
+        navigation.navigate("Login");
+      }
+    });
+  }, []);
 
   return (
     <View style={loginStyles.body}>
@@ -66,7 +81,7 @@ export function LoginScreen({ navigation, route }) {
             New user?
             <Text
               onPress={() => {
-                navigation.navigate("Signup")
+                navigation.navigate("Signup");
               }}
               style={{ color: "blue" }}
             >
@@ -80,21 +95,24 @@ export function LoginScreen({ navigation, route }) {
           <Button
             title={"Log in"}
             onPress={async () => {
-                try {
-                  const credential = await signInWithEmailAndPassword(
-                    auth,
-                    email,
-                    password
-                  );
-                  const authUser = credential.user;
-                  const user = await dataModel.getUserForAuthUser(authUser);
-                  navigation.navigate('Home', { params: { currentUserId: user.key }, screen: 'Restaurant' });
-                } catch (error) {
-                  Alert.alert("Login Error", error.message, [{ text: "OK" }]);
-                }
-                setEmail("");
-                setPassword("");
-             }}
+              try {
+                const credential = await signInWithEmailAndPassword(
+                  auth,
+                  email,
+                  password
+                );
+                const authUser = credential.user;
+                const user = await dataModel.getUserForAuthUser(authUser);
+                navigation.navigate("Home", {
+                  params: { currentUserId: user.key },
+                  screen: "Restaurant",
+                });
+              } catch (error) {
+                Alert.alert("Login Error", error.message, [{ text: "OK" }]);
+              }
+              setEmail("");
+              setPassword("");
+            }}
           />
         </View>
       </View>
