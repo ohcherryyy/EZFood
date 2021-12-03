@@ -3,29 +3,49 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {LoginScreen} from "./Login"
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { LoginScreen } from "./Login"
 import { SignupScreen } from './Signup';
 import { SignupBudgetScreen } from './budgetsignup';
 import { RestaurantScreen } from './Restaurant';
+import { RecipeCheckScreen } from './recipeCheck';
 
 const Stack = createNativeStackNavigator();
+const Tab = createMaterialBottomTabNavigator();
 
-function App() {
+function HomeTabs() {
+  return (
+    <Tab.Navigator>
+        <Tab.Screen name="Restaurant" component={RestaurantScreen} />
+        <Tab.Screen name="recipeCheck" component={RecipeCheckScreen} />
+    </Tab.Navigator>
+  );
+}
+
+
+export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator 
-        initialRouteName="Login"   
-        screenOptions={{
-          headerShown: false
-        }}
-      >
+    <Stack.Navigator
+      initialRouteName="Login"   
+      screenOptions={{
+        headerShown: false
+      }}
+    >
+        <Stack.Screen name="Home" component={HomeTabs} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="Budget" component={SignupBudgetScreen} />
-        <Stack.Screen name="Restaurant" component={RestaurantScreen} />
-      </Stack.Navigator>
+    </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-export default App;
+// function App() {
+//   return (
+//     <NavigationContainer>
+//     </NavigationContainer>
+//   );
+// }
+
+// export default App;

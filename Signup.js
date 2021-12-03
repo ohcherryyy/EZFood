@@ -94,7 +94,7 @@ export function SignupScreen({ navigation, route }) {
             Existing user?
             <Text
               onPress={() => {
-                setMode("login");
+                navigation.navigate("Login");
               }}
               style={{ color: "blue" }}
             >

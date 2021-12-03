@@ -12,39 +12,38 @@ import {
 } from "react-native";
 import { getDataModel } from "./DataModel";
 
-export function RestaurantScreen({ navigation, route }) {
-  const dataModel = getDataModel();
-  const { currentUserId } = route.params;
-  const userkey = dataModel.getUserForID(currentUserId);
-  const [search, setSearch] = useState("");
-  const [reslist, setReslist] = useState(dataModel.getRes());
+export function RecipeCheckScreen({ navigation, route }) {
+//   const dataModel = getDataModel();
+//   const { userId } = route.params;
+//   const userkey = dataModel.getUserForID(userId);
+//   const [search, setSearch] = useState("");
+//   const [reslist, setReslist] = useState(dataModel.getRes());
 
-  useEffect(() => {
-    dataModel.subscribeToUpdates(() => {
-      setReslist(dataModel.getRes());
-    });
-  });
+//   useEffect(() => {
+//     dataModel.subscribeToUpdates(() => {
+//       setReslist(dataModel.getRes());
+//     });
+//   });
 
-  return (
-    <View style={styles.container}>
-        <View style={styles.searchbar}></View>
-      <View style={styles.listContainer}>
-        <FlatList
-          contentContainerStyle={styles.listContentContainer}
-          data={reslist}
-          renderItem={({ item }) => {
-            return (
-              <View style={styles.listItem}>
-                <Text style={styles.listItemText}>{item.name}</Text>
+//   return (
+//     <View style={styles.container}>
+//       <View style={styles.listContainer}>
+//         <FlatList
+//           contentContainerStyle={styles.listContentContainer}
+//           data={reslist}
+//           renderItem={({ item }) => {
+//             return (
+//               <View style={styles.listItem}>
+//                 <Text style={styles.listItemText}>{item.name}</Text>
                 
                 
-              </View>
-            );
-          }}
-        />
-      </View>
-    </View>
-  );
+//               </View>
+//             );
+//           }}
+//         />
+//       </View>
+//     </View>
+//   );
 }
 const styles = StyleSheet.create({
   container: {
@@ -53,12 +52,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  searchbar:{
-    flex:0.2,
-
+  settingContainer: {
+    paddingTop: 10,
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
   listContainer: {
-    flex: 0.8,
+    flex: 0.5,
     paddingBottom: 30,
     paddingLeft: 30,
     paddingRight: 30,

@@ -88,7 +88,7 @@ export function LoginScreen({ navigation, route }) {
                   );
                   const authUser = credential.user;
                   const user = await dataModel.getUserForAuthUser(authUser);
-                  navigation.navigate("Restaurant", { currentUserId: user.key });
+                  navigation.navigate('Home', { params: { currentUserId: user.key }, screen: 'Restaurant' });
                 } catch (error) {
                   Alert.alert("Login Error", error.message, [{ text: "OK" }]);
                 }
