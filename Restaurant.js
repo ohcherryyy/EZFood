@@ -27,6 +27,7 @@ export function RestaurantScreen({ navigation, route }) {
 
   return (
     <View style={styles.container}>
+        <View style={styles.searchbar}></View>
       <View style={styles.listContainer}>
         <FlatList
           contentContainerStyle={styles.listContentContainer}
@@ -52,13 +53,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  settingContainer: {
-    paddingTop: 10,
-    justifyContent: "flex-start",
-    alignItems: "center",
+  searchbar:{
+    flex:0.2,
+
   },
   listContainer: {
-    flex: 0.5,
+    flex: 0.8,
     paddingBottom: 30,
     paddingLeft: 30,
     paddingRight: 30,

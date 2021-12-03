@@ -116,7 +116,6 @@ class DataModel {
   }
 
   subscribeToUpdates(callback) {
-    console.log("new subscriber: ", callback);
     this.subscribers.push(callback);
   }
 
