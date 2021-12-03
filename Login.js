@@ -28,10 +28,7 @@ export function LoginScreen({ navigation, route }) {
     onAuthStateChanged(auth, (authUser) => {
       if (authUser) {
         dataModel.initOnAuth();
-        navigation.navigate("Home", {
-          params: { currentUserId: authUser.uid },
-          screen: "Restaurant",
-        });
+        navigation.navigate("Home", { currentUserId: authUser.uid });
       } else {
         navigation.navigate("Login");
       }
