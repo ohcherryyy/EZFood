@@ -12,7 +12,8 @@ import {
   addDoc,
   setDoc,
   updateDoc,
-  getAuth
+  getAuth,
+  where
 } from "firebase/firestore";
 import { firebaseConfig } from "./Secrets";
 
@@ -24,16 +25,16 @@ const db = initializeFirestore(app, {
   useFetchStreams: false,
 });
 
-// const auth = getAuth(); 
+// const auth = getAuth();
 
 class DataModel {
   constructor() {
     this.users = [];
     this.userListeners = [];
-    this.userSnapshotUnsub = undefined; 
+    this.userSnapshotUnsub = undefined;
     this.subscribers = [];
-    this.restsearchlist=[]
-    this.recipesearchlist=[]
+    this.restsearchlist = [];
+    this.recipesearchlist = [];
     this.initUsersOnSnapshot();
     this.initResOnSnapshot();
     this.initRecipeOnSnapshot();
@@ -43,9 +44,9 @@ class DataModel {
     if (this.userSnapshotUnsub) {
       this.userSnapshotUnsub();
     }
-    this.userSnapshotUnsub = onSnapshot(collection(db, 'users'), qSnap => {
+    this.userSnapshotUnsub = onSnapshot(collection(db, "users"), (qSnap) => {
       let updatedUsers = [];
-      qSnap.forEach(docSnap => {
+      qSnap.forEach((docSnap) => {
         let user = docSnap.data();
         user.key = docSnap.id;
         updatedUsers.push(user);
@@ -113,7 +114,7 @@ class DataModel {
 
   async getCurrentUserDisplayName(userid) {
     // const authUser = auth.currentUser;
-    const userDocSnap = await getDoc(doc(db, 'users', userid));
+    const userDocSnap = await getDoc(doc(db, "users", userid));
     const user = userDocSnap.data();
     return user.displayName;
   }
@@ -145,10 +146,8 @@ class DataModel {
     return newUser;
   }
 
-  async updateItem(key,info) {
-    await updateDoc(doc(db, "users", key), info
-    
-    );
+  async updateItem(key, info) {
+    await updateDoc(doc(db, "users", key), info);
     this.notifyUserListeners();
   }
 
@@ -176,8 +175,8 @@ class DataModel {
     });
   }
 
-  getRes(){
-    return this.restsearchlist
+  getRes() {
+    return this.restsearchlist;
   }
 
   initRecipeOnSnapshot() {
@@ -194,8 +193,27 @@ class DataModel {
     });
   }
 
-  getRecipes(){
-    return this.recipesearchlist
+  getRecipes() {
+    return this.recipesearchlist;
+  }
+
+  searchRecipes(text) {
+    const q = query(
+      collection(db, "recipes"),
+      where("name", ">=", text),
+      where("name", "<=", text + "\uf8ff")
+    );
+    onSnapshot(q, (qSnap) => {
+      if (qSnap.empty) return;
+      let recList = [];
+      qSnap.forEach((docSnap) => {
+        let rec = docSnap.data();
+        rec.key = docSnap.id;
+        recList.push(rec);
+      });
+      this.recipesearchlist = recList;
+      this.updateSubscribers();
+    });
   }
 }
 

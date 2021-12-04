@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Alert } from "react-native";
-import CheckCircleOutlined from "@ant-design/icons";
 import {
   TextInput,
   Text,
@@ -12,11 +10,12 @@ import {
   Image,
 } from "react-native";
 import { getDataModel } from "./DataModel";
+import { SearchBar } from "react-native-elements";
 
 export function RecipeScreen({ navigation, route }) {
   const dataModel = getDataModel();
-    const { userId } = route.params;
-    const userkey = dataModel.getUserForID(userId);
+  const { userId } = route.params;
+  const userkey = dataModel.getUserForID(userId);
   const [search, setSearch] = useState("");
   const [reclist, setReclist] = useState(dataModel.getRecipes());
 
@@ -28,7 +27,18 @@ export function RecipeScreen({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchbar}></View>
+      <View style={styles.searchbar}>
+        <SearchBar
+          containerStyle={styles.searchbarstyle}
+          placeholder="Find your recipe"
+          platform="ios"
+          value={search}
+          onChangeText={(value) => {
+            dataModel.searchRecipes(value);
+            setSearch(value);
+          }}
+        />
+      </View>
       <View style={styles.listContainer}>
         <FlatList
           contentContainerStyle={styles.listContentContainer}
@@ -46,7 +56,9 @@ export function RecipeScreen({ navigation, route }) {
                   }}
                 />
                 <View style={styles.listItemCont}>
-                  <Text style={styles.listItemContTitle}>{item.name}</Text>
+                  <Text numberOfLines={100} style={styles.listItemContTitle}>
+                    {item.name}
+                  </Text>
                   <View style={styles.listItemConDetail}>
                     <Text style={styles.listItemText}>{item.cooktime}min</Text>
                     <Text style={styles.listItemText}>{item.mealtype} </Text>
@@ -70,6 +82,18 @@ const styles = StyleSheet.create({
   },
   searchbar: {
     flex: 0.2,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    paddingTop: 30,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  searchbarstyle: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "#fff",
+    borderColor: "#fff",
   },
   listContainer: {
     flex: 0.8,
@@ -95,9 +119,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     flexDirection: "row",
-    resizeMode: "center",
+    resizeMode: "cover",
     width: 100,
-    height: 100,
+    height: 70,
+    borderRadius: 8,
   },
   listItemCont: {
     flex: 0.8,
@@ -107,12 +132,12 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   listItemContTitle: {
-    flex: 0.4,
+    flex: 0.7,
     fontSize: 18,
     fontWeight: "bold",
   },
   listItemConDetail: {
-    flex: 0.4,
+    flex: 0.3,
     justifyContent: "flex-start",
     alignItems: "center",
     flexDirection: "row",
