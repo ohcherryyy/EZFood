@@ -13,7 +13,7 @@ import {
   setDoc,
   updateDoc,
   getAuth,
-  where
+  where,
 } from "firebase/firestore";
 import { firebaseConfig } from "./Secrets";
 
@@ -198,14 +198,43 @@ class DataModel {
   }
 
   searchRecipes(text) {
-    const q = query(
-      collection(db, "recipes"),
-      where("name", ">=", text),
-      where("name", "<=", text + "\uf8ff")
-    );
+    if (text) {
+      const q = query(
+        collection(db, "recipes"),
+        where("name", ">=", text),
+        where("name", "<=", text + "\uf8ff")
+      );
+      onSnapshot(q, (qSnap) => {
+        if (qSnap.empty) return;
+        let recList = [];
+        qSnap.forEach((docSnap) => {
+          let rec = docSnap.data();
+          rec.key = docSnap.id;
+          recList.push(rec);
+        });
+        this.recipesearchlist = recList;
+        this.updateSubscribers();
+      });
+    }
+  }
+
+  filterRecipes(category, min, max) {
+    if (min) {
+      var q = query(
+        collection(db, "recipes"),
+        where(category, ">", min),
+        where(category, "<=", max)
+      );
+    } else if (!min) {
+      var q = query(collection(db, "recipes"), where(category, "==", max));
+    } else if (!max) {
+      var q = query(collection(db, "recipes"), where(category, ">", min));
+    }
     onSnapshot(q, (qSnap) => {
-      if (qSnap.empty) return;
-      let recList = [];
+      var recList = [];
+      if (qSnap.empty) {
+        recList = [{ name: "No result" }];
+      }
       qSnap.forEach((docSnap) => {
         let rec = docSnap.data();
         rec.key = docSnap.id;
