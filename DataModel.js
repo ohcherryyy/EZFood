@@ -1,4 +1,4 @@
-import { InfoCircleFilled } from "@ant-design/icons";
+import { ConsoleSqlOutlined, InfoCircleFilled } from "@ant-design/icons";
 import { useLinkTo } from "@react-navigation/native";
 import { initializeApp, getApps } from "firebase/app";
 import {
@@ -32,8 +32,12 @@ class DataModel {
     this.users = [];
     this.userListeners = [];
     this.userSnapshotUnsub = undefined;
-    this.subscribers = [];
+    this.ressubscribers = [];
+    this.recsubscribers = [];
     this.restsearchlist = [];
+    this.showbudget = false;
+    this.budgetlist = [];
+    this.budgetprice = [];
     this.recipesearchlist = [];
     this.initUsersOnSnapshot();
     this.initResOnSnapshot();
@@ -151,14 +155,58 @@ class DataModel {
     this.notifyUserListeners();
   }
 
-  subscribeToUpdates(callback) {
-    this.subscribers.push(callback);
+  subscribeToResUpdates(callback) {
+    this.ressubscribers.push(callback);
   }
 
-  updateSubscribers() {
-    for (let sub of this.subscribers) {
+  updateResSubscribers() {
+    for (let sub of this.ressubscribers) {
       sub(); // just tell them there's an update
     }
+  }
+
+  searchRestaurants(text) {
+    if (text) {
+      const q = query(
+        collection(db, "restaurants"),
+        where("name", ">=", text),
+        where("name", "<=", text + "\uf8ff")
+      );
+      onSnapshot(q, (qSnap) => {
+        if (qSnap.empty) return;
+        let recList = [];
+        qSnap.forEach((docSnap) => {
+          let rec = docSnap.data();
+          rec.key = docSnap.id;
+          recList.push(rec);
+        });
+        this.restsearchlist = recList;
+        this.updateResSubscribers();
+      });
+    }
+    else{
+      this.initResOnSnapshot()
+    }
+  }
+
+  getBudget(key) {
+    for (u of this.users) {
+      if (u.key === key) {
+        let month = u.budget;
+        let breakfast = u.breakfast;
+        let lunch = u.lunch;
+        let dinner = u.dinner;
+        let b = (month * (breakfast * 0.01)) / 30;
+        let l = (month * (lunch * 0.01)) / 30;
+        let d = (month * (dinner * 0.01)) / 30;
+        let budgetlist = [b, l, d];
+        this.budgetprice = budgetlist;
+      }
+    }
+  }
+
+  getbugetlist() {
+    return this.budgetprice;
   }
 
   initResOnSnapshot() {
@@ -168,15 +216,60 @@ class DataModel {
       qSnap.forEach((docSnap) => {
         let res = docSnap.data();
         res.key = docSnap.id;
-        resList.push(res);
+        if (this.showbudget) {
+          for (u of this.budgetlist) {
+            if (res.key === u) {
+              resList.push(res);
+            }
+          }
+        } else {
+          resList.push(res);
+        }
       });
       this.restsearchlist = resList;
-      this.updateSubscribers();
+      this.updateResSubscribers();
+    });
+  }
+
+  getshowbudget() {
+    return this.showbudget;
+  }
+
+  changeshowbudget() {
+    this.showbudget = !this.showbudget;
+    this.updateResSubscribers();
+  }
+
+  budgetRes(i) {
+    bug = this.budgetprice[i];
+    var q = query(collection(db, "menu"), where("price", "<=", bug));
+    onSnapshot(q, (qSnap) => {
+      let reslist = [];
+      qSnap.forEach((docSnap) => {
+        let res = docSnap.data();
+        res.key = docSnap.id;
+        if (!reslist.includes(res.resid)) {
+          reslist.push(res.resid);
+        }
+      });
+      this.budgetlist = reslist;
+      this.updateResSubscribers();
+      this.initResOnSnapshot();
     });
   }
 
   getRes() {
     return this.restsearchlist;
+  }
+
+  subscribeToRecUpdates(callback) {
+    this.recsubscribers.push(callback);
+  }
+
+  updateRecSubscribers() {
+    for (let sub of this.recsubscribers) {
+      sub(); // just tell them there's an update
+    }
   }
 
   initRecipeOnSnapshot() {
@@ -189,7 +282,7 @@ class DataModel {
         recList.push(rec);
       });
       this.recipesearchlist = recList;
-      this.updateSubscribers();
+      this.updateRecSubscribers();
     });
   }
 
@@ -213,24 +306,27 @@ class DataModel {
           recList.push(rec);
         });
         this.recipesearchlist = recList;
-        this.updateSubscribers();
+        this.updateRecSubscribers();
       });
+    }
+    else{
+      this.initRecipeOnSnapshot()
     }
   }
 
   filterRecipes(category, min, max) {
-    if (min && max!=null) {
+    if (min && max != null) {
       var q = query(
         collection(db, "recipes"),
         where(category, ">=", min),
         where(category, "<", max)
       );
-      console.log("0-30")
+      console.log("0-30");
     } else if (!min) {
       var q = query(collection(db, "recipes"), where(category, "==", max));
-    } else if (max===null) {
+    } else if (max === null) {
       var q = query(collection(db, "recipes"), where(category, ">", min));
-      console.log("60")
+      console.log("60");
     }
     onSnapshot(q, (qSnap) => {
       var recList = [];
@@ -243,7 +339,7 @@ class DataModel {
         recList.push(rec);
       });
       this.recipesearchlist = recList;
-      this.updateSubscribers();
+      this.updateRecSubscribers();
     });
   }
 }
