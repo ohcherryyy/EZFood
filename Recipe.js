@@ -65,7 +65,7 @@ export function RecipeScreen({ navigation, route }) {
               <Text style={styles.filterOptionItem}>All</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => dataModel.filterRecipes("cooktime", 0, 30)}
+              onPress={() => dataModel.filterRecipes("cooktime", 1, 30)}
             >
               <Text style={styles.filterOptionItem} color="red">0-30 min</Text>
             </TouchableOpacity>
