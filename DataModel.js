@@ -219,16 +219,18 @@ class DataModel {
   }
 
   filterRecipes(category, min, max) {
-    if (min) {
+    if (min && max!=null) {
       var q = query(
         collection(db, "recipes"),
-        where(category, ">", min),
-        where(category, "<=", max)
+        where(category, ">=", min),
+        where(category, "<", max)
       );
+      console.log("0-30")
     } else if (!min) {
       var q = query(collection(db, "recipes"), where(category, "==", max));
-    } else if (!max) {
+    } else if (max===null) {
       var q = query(collection(db, "recipes"), where(category, ">", min));
+      console.log("60")
     }
     onSnapshot(q, (qSnap) => {
       var recList = [];
