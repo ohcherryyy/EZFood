@@ -22,7 +22,7 @@ export function RecipeScreen({ navigation, route }) {
   const [filtershow, setfiltershow] = useState(false);
 
   useEffect(() => {
-    dataModel.subscribeToUpdates(() => {
+    dataModel.subscribeToRecUpdates(() => {
       setReclist(dataModel.getRecipes());
     });
   });
