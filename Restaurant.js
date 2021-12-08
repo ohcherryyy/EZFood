@@ -49,7 +49,7 @@ export function RestaurantScreen({ navigation, route }) {
       <View style={styles.filtercontainer}>
         <View style={styles.filterItem}>
           <TouchableOpacity onPress={() => setfiltershow(!filtershow)}>
-            <Text style={styles.filtertext}>Cook time</Text>
+            <Text style={styles.filtertext}>Meal</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.filterItem}>
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
   },
   filtercontainer: {
-    flex: 0.1,
+    flex: 0.17,
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
