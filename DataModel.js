@@ -32,6 +32,7 @@ class DataModel {
     this.users = [];
     this.userListeners = [];
     this.userSnapshotUnsub = undefined;
+    this.userinfo=[]
     this.ressubscribers = [];
     this.recsubscribers = [];
     this.restsearchlist = [];
@@ -120,7 +121,9 @@ class DataModel {
     // const authUser = auth.currentUser;
     const userDocSnap = await getDoc(doc(db, "users", userid));
     const user = userDocSnap.data();
-    return user.displayName;
+    const list=[]
+    list.push(user.displayName,user.budget,user.day,user.breakfast,user.lunch,user.dinner)
+    return list;
   }
 
   async getUserForAuthUser(authUser) {

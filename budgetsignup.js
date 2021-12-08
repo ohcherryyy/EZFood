@@ -24,6 +24,7 @@ export function SignupBudgetScreen({ navigation, route }) {
   const auth = getAuth();
   const [displayName, setDisplayName] = useState("");
   const [budget, setBudget] = useState("");
+  const [day, setDay] = useState("");
   const [breakfast, setBreak] = useState("");
   const [lunch, setLunch] = useState("");
   const [dinner, setDinner] = useState("");
@@ -60,6 +61,22 @@ export function SignupBudgetScreen({ navigation, route }) {
               value={budget}
               onChangeText={(text) => {
                 setBudget(text);
+              }}
+            />
+          </View>
+        </View>
+
+        <View style={loginStyles.loginRow}>
+          <View style={loginStyles.loginLabelContainer}>
+            <Text style={loginStyles.loginLabelText}>Dining out days: </Text>
+          </View>
+          <View style={loginStyles.loginInputContainer}>
+            <TextInput
+              style={loginStyles.loginInputBox}
+              placeholder="enter days for dining out "
+              value={day}
+              onChangeText={(text) => {
+                setDay(text);
               }}
             />
           </View>
@@ -125,10 +142,11 @@ export function SignupBudgetScreen({ navigation, route }) {
             onPress={async() => {
                 let info={
                     displayName: displayName,
-                    budget: budget,
-                    breakfast:breakfast,
-                    lunch:lunch,
-                    dinner:dinner
+                    budget: Number(budget),
+                    day:Number(day),
+                    breakfast:Number(breakfast),
+                    lunch:Number(lunch),
+                    dinner:Number(dinner)
                 }
                 dataModel.updateItem(currentUserId, info)
                 navigation.navigate('Home', { params: { currentUserId: currentUserId }, screen: 'Restaurant' });
