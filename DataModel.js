@@ -196,12 +196,13 @@ class DataModel {
     for (u of this.users) {
       if (u.key === key) {
         let month = u.budget;
+        let day=u.day
         let breakfast = u.breakfast;
         let lunch = u.lunch;
         let dinner = u.dinner;
-        let b = (month * (breakfast * 0.01)) / 30;
-        let l = (month * (lunch * 0.01)) / 30;
-        let d = (month * (dinner * 0.01)) / 30;
+        let b = (month * (breakfast * 0.01)) / day;
+        let l = (month * (lunch * 0.01)) / day;
+        let d = (month * (dinner * 0.01)) / day;
         let budgetlist = [b, l, d];
         this.budgetprice = budgetlist;
       }
