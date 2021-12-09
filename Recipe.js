@@ -143,7 +143,7 @@ export function RecipeScreen({ navigation, route }) {
                 //这里跳转到详情页
                 // onPress={() =>
                 //   navigation.navigate("", {
-                //     currentUserId: userId,
+                //     userkey:userkey,
                 //     recipeId: item.key,
                 //   })
                 // }

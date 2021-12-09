@@ -15,9 +15,9 @@ import { getDataModel } from "./DataModel";
 import { SearchBar } from "react-native-elements";
 
 export function RestDetailScreen({ navigation, route }) {
-  const { currentUserId, restId } = route.params;
-  console.log("user" + currentUserId);
-  console.log("res" + restId);
+  const { userkey, restId } = route.params;
+  
+
   return (
     <View style={styles.container}>
       <Text style={styles.filtertext}>{currentUserId}</Text>
