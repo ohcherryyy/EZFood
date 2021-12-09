@@ -92,7 +92,7 @@ export function RestaurantScreen({ navigation, route }) {
                 style={styles.listItem}
                 onPress={() =>
                   navigation.navigate("ResDetail", {
-                    currentUserId: currentUserId,
+                    userkey:userkey,
                     restId: item.key,
                   })
                 }
