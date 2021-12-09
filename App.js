@@ -13,6 +13,7 @@ import { RecipeScreen } from './Recipe';
 import { FavoriteScreen } from './Favorite';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ProfileScreen } from './Profile';
+import { RestDetailScreen } from './ResDetail';
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -89,6 +90,7 @@ export default function App() {
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="Budget" component={SignupBudgetScreen} />
         <Tab.Screen name="recipeCheck" component={RecipeCheckScreen} />
+        <Stack.Screen name="ResDetail" component={RestDetailScreen} />
     </Stack.Navigator>
     </NavigationContainer>
   );

@@ -67,7 +67,9 @@ export function RecipeScreen({ navigation, route }) {
             <TouchableOpacity
               onPress={() => dataModel.filterRecipes("cooktime", 1, 30)}
             >
-              <Text style={styles.filterOptionItem} color="red">0-30 min</Text>
+              <Text style={styles.filterOptionItem} color="red">
+                0-30 min
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => dataModel.filterRecipes("cooktime", 30, 60)}
@@ -138,7 +140,13 @@ export function RecipeScreen({ navigation, route }) {
             return (
               <TouchableOpacity
                 style={styles.listItem}
-                // onPress={() => navigation.navigate("Restaurant")}
+                //这里跳转到详情页
+                // onPress={() =>
+                //   navigation.navigate("", {
+                //     currentUserId: userId,
+                //     recipeId: item.key,
+                //   })
+                // }
               >
                 <Image
                   style={styles.listItemimgContainer}

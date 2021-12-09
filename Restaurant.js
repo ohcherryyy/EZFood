@@ -51,44 +51,15 @@ export function RestaurantScreen({ navigation, route }) {
             <Text style={styles.filtertext}>Meal</Text>
           </View>
           <View style={styles.filterCont}>
-            <TouchableOpacity>
-             <Text>Breakfast</Text> 
+            <TouchableOpacity onPress={() => setmeal(0)}>
+              <Text>Breakfast</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
-             <Text>Lunch</Text> 
+            <TouchableOpacity onPress={() => setmeal(1)}>
+              <Text>Lunch</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
-             <Text>Dinner</Text> 
+            <TouchableOpacity onPress={() => setmeal(2)}>
+              <Text>Dinner</Text>
             </TouchableOpacity>
-            {/* <View>
-              <TouchableOpacity
-                onPress={() => {
-                  setmeal(0);
-                }}
-              >
-                <Text style={styles.filterOptionItem}>Breakfast</Text>
-              </TouchableOpacity>
-            </View>
-            <View>
-              <TouchableOpacity
-                onPress={() => {
-                  setmeal(1);
-                }}
-              >
-                <Text style={styles.filterOptionItem} color="red">
-                  Lunch
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View>
-              <TouchableOpacity
-                onPress={() => {
-                  setmeal(2);
-                }}
-              >
-                <Text style={styles.filterOptionItem}>Dinner</Text>
-              </TouchableOpacity>
-            </View> */}
           </View>
         </View>
         <View style={styles.filterItem}>
@@ -97,18 +68,17 @@ export function RestaurantScreen({ navigation, route }) {
           </View>
           <View style={styles.filterCont}>
             <Switch
-            value={budget}
-            onValueChange={() => {
-              dataModel.changeshowbudget();
-              if (!budget) {
-                dataModel.budgetRes(meal);
-              } else {
-                dataModel.initResOnSnapshot();
-              }
-            }}
-          ></Switch>
+              value={budget}
+              onValueChange={() => {
+                dataModel.changeshowbudget();
+                if (!budget) {
+                  dataModel.budgetRes(meal);
+                } else {
+                  dataModel.initResOnSnapshot();
+                }
+              }}
+            ></Switch>
           </View>
-          
         </View>
       </View>
 
@@ -120,7 +90,12 @@ export function RestaurantScreen({ navigation, route }) {
             return (
               <TouchableOpacity
                 style={styles.listItem}
-                // onPress={() => navigation.navigate("Restaurant")}
+                onPress={() =>
+                  navigation.navigate("ResDetail", {
+                    currentUserId: currentUserId,
+                    restId: item.key,
+                  })
+                }
               >
                 {/* <Image
                   style={styles.listItemimgContainer}
@@ -175,13 +150,14 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    width:"100%",
-    paddingLeft:20,
-    paddingRight:20
+    width: "100%",
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 20,
   },
   filterItem: {
-    width:"100%",
-    height:"50%",
+    width: "100%",
+    height: "50%",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -190,7 +166,7 @@ const styles = StyleSheet.create({
     flex: 0.4,
     justifyContent: "center",
     alignItems: "flex-start",
-    width:"100%"
+    width: "100%",
   },
   filterCont: {
     flex: 0.6,
@@ -198,12 +174,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     alignItems: "center",
   },
-  
+
   filtertext: {
     fontSize: 15,
     fontWeight: "bold",
   },
-  
+
   listContainer: {
     flex: 0.85,
     paddingTop: 20,
