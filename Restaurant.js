@@ -21,7 +21,6 @@ export function RestaurantScreen({ navigation, route }) {
   dataModel.getBudget(userkey);
   const [search, setSearch] = useState("");
   const [reslist, setReslist] = useState(dataModel.getRes());
-  const [filtershow, setfiltershow] = useState(false);
   const [budget, setBudget] = useState(dataModel.getshowbudget());
   const [meal, setmeal] = useState(0);
 
@@ -48,12 +47,56 @@ export function RestaurantScreen({ navigation, route }) {
       </View>
       <View style={styles.filtercontainer}>
         <View style={styles.filterItem}>
-          <TouchableOpacity onPress={() => setfiltershow(!filtershow)}>
+          <View style={styles.filterTitle}>
             <Text style={styles.filtertext}>Meal</Text>
-          </TouchableOpacity>
+          </View>
+          <View style={styles.filterCont}>
+            <TouchableOpacity>
+             <Text>Breakfast</Text> 
+            </TouchableOpacity>
+            <TouchableOpacity>
+             <Text>Lunch</Text> 
+            </TouchableOpacity>
+            <TouchableOpacity>
+             <Text>Dinner</Text> 
+            </TouchableOpacity>
+            {/* <View>
+              <TouchableOpacity
+                onPress={() => {
+                  setmeal(0);
+                }}
+              >
+                <Text style={styles.filterOptionItem}>Breakfast</Text>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  setmeal(1);
+                }}
+              >
+                <Text style={styles.filterOptionItem} color="red">
+                  Lunch
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  setmeal(2);
+                }}
+              >
+                <Text style={styles.filterOptionItem}>Dinner</Text>
+              </TouchableOpacity>
+            </View> */}
+          </View>
         </View>
         <View style={styles.filterItem}>
-          <Switch
+          <View style={styles.filterTitle}>
+            <Text style={styles.filtertext}>Budget control</Text>
+          </View>
+          <View style={styles.filterCont}>
+            <Switch
             value={budget}
             onValueChange={() => {
               dataModel.changeshowbudget();
@@ -64,35 +107,11 @@ export function RestaurantScreen({ navigation, route }) {
               }
             }}
           ></Switch>
+          </View>
+          
         </View>
       </View>
-      <View style={styles.filterCont}>
-        <View style={styles.filterOption}>
-          <TouchableOpacity
-            onPress={() => {
-              setmeal(0);
-            }}
-          >
-            <Text style={styles.filterOptionItem}>Breakfast</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setmeal(1);
-            }}
-          >
-            <Text style={styles.filterOptionItem} color="red">
-              Lunch
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setmeal(2);
-            }}
-          >
-            <Text style={styles.filterOptionItem}>Dinner</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+
       <View style={styles.listContainer}>
         <FlatList
           contentContainerStyle={styles.listContentContainer}
@@ -132,44 +151,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     paddingTop: 50,
-  },
-  searchbar: {
-    flex: 0.2,
-  },
-  listContainer: {
-    flex: 0.8,
-    paddingBottom: 30,
-    paddingLeft: 30,
-    paddingRight: 30,
-    width: "100%",
-  },
-  listContentContainer: {
-    justifyContent: "flex-start",
-  },
-  listItem: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    flexDirection: "row",
-    padding: 5,
-  },
-  listItemText: {
-    flex: 0.5,
-    fontSize: 18,
-  },
-  PrioItemText: {
-    flex: 0.2,
-  },
-  listItemButtons: {
-    flex: 0.3,
-    flexDirection: "row",
-  },
-  menuContainer: {
-    backgroundColor: "rgba(0.5, 0.25, 0, 0.2)",
-    flexDirection: "column",
-    justifyContent: "flex-end",
   },
   searchbar: {
     flex: 0.05,
@@ -177,7 +160,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     paddingTop: 30,
-    paddingBottom: -20,
+    paddingBottom: 30,
     paddingLeft: 10,
     paddingRight: 10,
   },
@@ -188,46 +171,39 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
   },
   filtercontainer: {
-    flex: 0.17,
-    width: "100%",
-    flexDirection: "row",
+    flex: 0.1,
+    flexDirection: "column",
     alignItems: "center",
-    justifyContent: "space-around",
-    paddingLeft: 10,
-    paddingRight: 10,
+    justifyContent: "center",
+    width:"100%",
+    paddingLeft:20,
+    paddingRight:20
   },
   filterItem: {
-    flex: 0,
-  },
-  filtertext: {
-    fontSize: 15,
-  },
-  filterCont: {
-    flex: 0.1,
+    width:"100%",
+    height:"50%",
     flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
-    justifyContent: "space-around",
-    paddingLeft: 25,
-    paddingRight: 0,
-    width: "100%",
   },
-  filterOption: {
+  filterTitle: {
     flex: 0.4,
     justifyContent: "center",
     alignItems: "flex-start",
-    flexDirection: "column",
+    width:"100%"
   },
-  filterOptionItem: {
+  filterCont: {
+    flex: 0.6,
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+  },
+  
+  filtertext: {
     fontSize: 15,
+    fontWeight: "bold",
   },
-
-  listContainerexpand: {
-    flex: 0.75,
-    paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
-    width: "100%",
-  },
+  
   listContainer: {
     flex: 0.85,
     paddingTop: 20,
