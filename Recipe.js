@@ -14,8 +14,8 @@ import { SearchBar } from "react-native-elements";
 
 export function RecipeScreen({ navigation, route }) {
   const dataModel = getDataModel();
-  const { userId } = route.params;
-  const userkey = dataModel.getUserForID(userId);
+  const { currentUserId } = route.params;
+  const userkey = dataModel.getUserForID(currentUserId);
   const [search, setSearch] = useState("");
   const [reclist, setReclist] = useState(dataModel.getRecipes());
   const [cooktime, setCooktime] = useState("");
@@ -140,13 +140,7 @@ export function RecipeScreen({ navigation, route }) {
             return (
               <TouchableOpacity
                 style={styles.listItem}
-                //这里跳转到详情页
-                // onPress={() =>
-                //   navigation.navigate("", {
-                //     userkey:userkey,
-                //     recipeId: item.key,
-                //   })
-                // }
+                onPress={() => navigation.navigate("recipeDetail", {recipeItem: item, currentUserId: userkey},)}
               >
                 <Image
                   style={styles.listItemimgContainer}
