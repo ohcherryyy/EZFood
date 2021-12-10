@@ -9,6 +9,7 @@ import {
   onSnapshot,
   doc,
   getDoc,
+  getDocs,
   addDoc,
   setDoc,
   updateDoc,
@@ -32,10 +33,11 @@ class DataModel {
     this.users = [];
     this.userListeners = [];
     this.userSnapshotUnsub = undefined;
-    this.userinfo=[]
+    this.userinfo = [];
     this.ressubscribers = [];
     this.recsubscribers = [];
     this.restsearchlist = [];
+    this.menulist=[]
     this.showbudget = false;
     this.budgetlist = [];
     this.budgetprice = [];
@@ -121,8 +123,15 @@ class DataModel {
     // const authUser = auth.currentUser;
     const userDocSnap = await getDoc(doc(db, "users", userid));
     const user = userDocSnap.data();
-    const list=[]
-    list.push(user.displayName,user.budget,user.day,user.breakfast,user.lunch,user.dinner)
+    const list = [];
+    list.push(
+      user.displayName,
+      user.budget,
+      user.day,
+      user.breakfast,
+      user.lunch,
+      user.dinner
+    );
     return list;
   }
 
@@ -186,9 +195,8 @@ class DataModel {
         this.restsearchlist = recList;
         this.updateResSubscribers();
       });
-    }
-    else{
-      this.initResOnSnapshot()
+    } else {
+      this.initResOnSnapshot();
     }
   }
 
@@ -196,7 +204,7 @@ class DataModel {
     for (u of this.users) {
       if (u.key === key) {
         let month = u.budget;
-        let day=u.day
+        let day = u.day;
         let breakfast = u.breakfast;
         let lunch = u.lunch;
         let dinner = u.dinner;
@@ -249,17 +257,59 @@ class DataModel {
     var q = query(collection(db, "menu"), where("price", "<=", bug));
     onSnapshot(q, (qSnap) => {
       let reslist = [];
+      let menulist=[]
       qSnap.forEach((docSnap) => {
         let res = docSnap.data();
         res.key = docSnap.id;
         if (!reslist.includes(res.resid)) {
           reslist.push(res.resid);
         }
+        menulist.push(res.key)
       });
       this.budgetlist = reslist;
+      this.menulist=menulist
+      console.log(this.menulist)
       this.updateResSubscribers();
       this.initResOnSnapshot();
     });
+  }
+
+  async getresinfo(id) {
+    const resDocSnap = await getDoc(doc(db, "restaurants", id));
+    const res = resDocSnap.data();
+    return res;
+  }
+
+  async menuOnSnapshot(id){
+    const q = query(collection(db, "menu"), where("resid", "==", id));
+    var menulist=[]
+    var newlist=[]
+    const menuDocRep=await getDocs(q)
+    menuDocRep.forEach((doc)=>{
+      const res=doc.data()
+      res.key=doc.id
+      menulist.push(res)
+    })
+    // console.log(this.comparemenu(menulist))
+    return this.comparemenu(menulist)
+    
+  }
+
+  comparemenu(menulist){
+    var nowlsist=this.menulist
+    for(u of menulist){
+      if(nowlsist.includes(u.key)){
+        u.req=true
+      }
+      else{
+        u.req=false
+      }
+    }
+    return menulist
+  }
+
+  getMenu(){
+    return this.menulist
   }
 
   getRes() {
@@ -312,9 +362,8 @@ class DataModel {
         this.recipesearchlist = recList;
         this.updateRecSubscribers();
       });
-    }
-    else{
-      this.initRecipeOnSnapshot()
+    } else {
+      this.initRecipeOnSnapshot();
     }
   }
 
