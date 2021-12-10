@@ -197,6 +197,7 @@ class DataModel {
   getRecipes(){
     return this.recipesearchlist
   }
+
 }
 
 let theDataModel = undefined;

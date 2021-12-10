@@ -15,8 +15,8 @@ import { getDataModel } from "./DataModel";
 
 export function RecipeScreen({ navigation, route }) {
   const dataModel = getDataModel();
-    const { userId } = route.params;
-    const userkey = dataModel.getUserForID(userId);
+  const { currentUserId } = route.params;
+  const userkey = dataModel.getUserForID(currentUserId);
   const [search, setSearch] = useState("");
   const [reclist, setReclist] = useState(dataModel.getRecipes());
 
@@ -37,7 +37,7 @@ export function RecipeScreen({ navigation, route }) {
             return (
               <TouchableOpacity
                 style={styles.listItem}
-                // onPress={() => navigation.navigate("Restaurant")}
+                onPress={() => navigation.navigate("recipeDetail", {recipeItem: item, currentUserId: userkey},)}
               >
                 <Image
                   style={styles.listItemimgContainer}
