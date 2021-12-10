@@ -15,6 +15,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { ProfileScreen } from './Profile';
 import { RestDetailScreen } from './ResDetail';
 import { RecipeDetailScreen } from './recipeDetail';
+import {RecipeCookScreen} from './recipeCook';
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -93,6 +94,7 @@ export default function App() {
         <Stack.Screen name="ResDetail" component={RestDetailScreen} />
         <Stack.Screen name="recipeCheck" component={RecipeCheckScreen} />
         <Stack.Screen name="recipeDetail" component={RecipeDetailScreen} />
+        <Stack.Screen name="recipeCook" component={RecipeCookScreen} />
     </Stack.Navigator>
     </NavigationContainer>
   );

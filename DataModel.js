@@ -42,6 +42,7 @@ class DataModel {
     this.budgetlist = [];
     this.budgetprice = [];
     this.recipesearchlist = [];
+    this.ingredientslist=[]
     this.initUsersOnSnapshot();
     this.initResOnSnapshot();
     this.initRecipeOnSnapshot();
@@ -201,7 +202,7 @@ class DataModel {
   }
 
   getBudget(key) {
-    for (u of this.users) {
+    for (let u of this.users) {
       if (u.key === key) {
         let month = u.budget;
         let day = u.day;
@@ -297,7 +298,7 @@ class DataModel {
 
   comparemenu(menulist){
     var nowlsist=this.menulist
-    for(u of menulist){
+    for(let u of menulist){
       if(nowlsist.includes(u.key)){
         u.req=true
       }
@@ -394,6 +395,49 @@ class DataModel {
       this.recipesearchlist = recList;
       this.updateRecSubscribers();
     });
+  }
+
+  async getRecipeKey(recipeKey) {
+    const receipeDocSnap = await getDoc(doc(db, "recipes", recipeKey));
+    const recipeItem = receipeDocSnap.data();
+    return recipeItem;
+  }
+
+  async setCheckStatus(recipeKey) {
+    const receipeDocSnap = await getDoc(doc(db, "recipes", recipeKey));
+    const recipeItem = receipeDocSnap.data();
+    const ingredients = recipeItem.ingredients
+   
+    this.ingredientslist = this.getingredient(ingredients)
+    console.log(this.ingredientslist)
+    this.updateRecSubscribers()
+    return this.ingredientslist
+  }
+
+
+  getingredient(ingredients) {
+    var ingredientsList = [];
+    // for (const ingredient of ingredients) {
+    //   var ingredientsStatus = {};
+    //   ingredientsStatus["ingre"] = ingredient
+    //   ingredientsStatus["checkStatus"] = false
+    //   ingredientsList.push(ingredientsStatus)
+    // };
+    for(let i=0;i<ingredients.length;i++){
+      ingredientsList.push({key:i,ingre:ingredients[i],checkStatus:false})
+    }
+    return ingredientsList;
+  }  
+
+  setCheck(key){
+    for (let u of this.ingredientslist){
+      if(u.ingre===key){
+        u.checkStatus=!u.checkStatus
+        this.updateRecSubscribers()
+         console.log(u.checkStatus)
+        return u.checkStatusx
+      }
+    }
   }
 
 }
