@@ -12,59 +12,54 @@ import {
 
 import { CheckBox } from 'react-native-elements';
 import { getDataModel } from "./DataModel";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 export function RecipeCheckScreen({ navigation, route }) {
   const dataModel = getDataModel();
-  const { recipeItem } = route.params;
-  const ingredientsList = setCheckStatus(recipeItem);
+  const { recipeKey } = route.params;
+  const [ingredients, setIngredients] = useState(["Default"]);
 
-  useEffect(()=>{
-    setCheckStatus()
+  useEffect(async () => {
+       setIngredients( await dataModel.setCheckStatus(recipeKey));
   }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.listContainer}>
+        <View style={styles.titleButton}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <MaterialCommunityIcons name="arrow-left" color="black" size={26} />
+          </TouchableOpacity>
+        </View>
       <Text style={styles.listItemText}>Ingredients:</Text>
       <FlatList
           contentContainerStyle={styles.listContentContainer}
-          data={ingredientsList}
+          data={ingredients}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={({item})=>{
-            console.log(item.checkStatus)
+           // console.log(item.checkStatus)
+          
             return (
             <View style={styles.listItem}>
               <CheckBox
-                checked={item.checkStatus}
-                onPress={() => changeCheckStatus(item, ingredientsList)}
+                checked={item.CheckStatus}
+                onPress={() => dataModel.setCheck(item.ingre)}
               />
               <Text style={styles.listItemText}>{item.ingre}</Text>
             </View>
             );}
+            
           }
         />
+        <TouchableOpacity
+          style={styles.listItem}
+          onPress={() => navigation.navigate("recipeCook", {recipeKey: recipeKey})}
+        >
+            <Text style={styles.listItemText}>Start to Cook!</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
-}
-
-function setCheckStatus(recipeItem) {
-  var ingredientsList = [];
-  for (const ingredient of recipeItem.ingredients) {
-    var ingredientsStatus = {};
-    ingredientsStatus["ingre"] = ingredient
-    ingredientsStatus["checkStatus"] = false
-    ingredientsList.push(ingredientsStatus)
-  };
-  return ingredientsList
-};
-
-function changeCheckStatus(item, ingredientsList) {
-  for (const ingredient of ingredientsList) {
-    if (ingredient == item) {
-      ingredient['checkStatus'] = !item['checkStatus']
-      console.log(ingredient['checkStatus'])
-    }
-  }
 }
 
 const styles = StyleSheet.create({
