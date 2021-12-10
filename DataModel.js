@@ -395,6 +395,7 @@ class DataModel {
       this.updateRecSubscribers();
     });
   }
+
 }
 
 let theDataModel = undefined;
