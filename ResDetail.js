@@ -22,10 +22,12 @@ export function RestDetailScreen({ navigation, route }) {
   const [info, setinfo] = useState(["Default"]);
   const [tab, settab] = useState(tablist[0]);
   const [menulist, setmenulist] = useState(["Nothing found"]);
+  const [fav, setfav] = useState(dataModel.initfavlist(userkey, restId));
 
   useEffect(async () => {
     setinfo(await dataModel.getresinfo(restId));
-    setmenulist(await dataModel.menuOnSnapshot(restId))
+    setmenulist(await dataModel.menuOnSnapshot(restId));
+    setfav(dataModel.initfavlist(userkey, restId));
   }, []);
 
   return (
@@ -40,8 +42,26 @@ export function RestDetailScreen({ navigation, route }) {
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>{info.name}</Text>
         </View>
         <View style={styles.titleButton}>
-          <TouchableOpacity>
-            <MaterialCommunityIcons name="heart-outline" size={26} />
+          <TouchableOpacity
+            onPress={() => {
+              console.log(fav);
+              fav
+                ? dataModel.removefav(userkey)
+                : dataModel.addtofav(userkey, {
+                    name: info.name,
+                    cuisine:info.cuisine,
+                    price:info.price,
+                    rating:info.rating,
+                    id: restId,
+                    category: "Restaurants",
+                  });
+              setfav(!fav);
+            }}
+          >
+            <MaterialCommunityIcons
+              name={fav ? "heart" : "heart-outline"}
+              size={26}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -263,9 +283,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingTop:20,
-    paddingLeft:10,
-    paddingRight:10
+    paddingTop: 20,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
   menuTitletxt: {
     fontSize: 16,

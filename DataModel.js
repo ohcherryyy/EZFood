@@ -11,6 +11,7 @@ import {
   getDoc,
   getDocs,
   addDoc,
+  deleteDoc,
   setDoc,
   updateDoc,
   getAuth,
@@ -34,10 +35,13 @@ class DataModel {
     this.userListeners = [];
     this.userSnapshotUnsub = undefined;
     this.userinfo = [];
+    this.fav = false;
+    this.favlist=[]
+    this.deletekey;
     this.ressubscribers = [];
     this.recsubscribers = [];
     this.restsearchlist = [];
-    this.menulist=[]
+    this.menulist = [];
     this.showbudget = false;
     this.budgetlist = [];
     this.budgetprice = [];
@@ -46,6 +50,7 @@ class DataModel {
     this.initResOnSnapshot();
     this.initRecipeOnSnapshot();
   }
+  //user
 
   initOnAuth() {
     if (this.userSnapshotUnsub) {
@@ -167,6 +172,65 @@ class DataModel {
     this.notifyUserListeners();
   }
 
+  favOnsnapshot(key) {
+    const q = doc(db, "users", key);
+    const favRef = collection(q, "favorite");
+    onSnapshot(favRef, (qSnap) => {
+      let favList = [];
+      qSnap.forEach((docSnap) => {
+        let fav = docSnap.data();
+        fav.key = docSnap.id;
+        favList.push(fav);
+      });
+      this.favlist = favList;
+      this.updateResSubscribers();
+    });
+  }
+
+  getfav(){
+    console.log("get")
+    console.log(this.favlist)
+    return this.favlist
+  }
+
+  initfavlist(key, info) {
+    var added = true;
+    const q = doc(db, "users", key);
+    const favRef = collection(q, "favorite");
+    onSnapshot(query(favRef, where("id", "==", info)), (qSnap) => {
+      if (qSnap.empty) {
+        added = false;
+      } else {
+        added = true;
+        qSnap.forEach((docSnap) => {
+          let fav = docSnap.data();
+          fav.key = docSnap.id;
+          this.deletekey = fav.key;
+        });
+      }
+      this.fav = added;
+    });
+    this.updateResSubscribers();
+    return this.fav;
+  }
+
+  async addtofav(key, favinfo) {
+    const q = doc(db, "users", key);
+    const favRef = collection(q, "favorite");
+    await addDoc(favRef, favinfo);
+  }
+
+  async removefav(key) {
+    const q = doc(db, "users", key);
+    const favRef = doc(q, "favorite",this.deletekey);
+    console.log(this.deletekey);
+    if (this.deletekey) {
+      await deleteDoc(favRef);
+    }
+  }
+
+  //restaurant info
+
   subscribeToResUpdates(callback) {
     this.ressubscribers.push(callback);
   }
@@ -257,18 +321,18 @@ class DataModel {
     var q = query(collection(db, "menu"), where("price", "<=", bug));
     onSnapshot(q, (qSnap) => {
       let reslist = [];
-      let menulist=[]
+      let menulist = [];
       qSnap.forEach((docSnap) => {
         let res = docSnap.data();
         res.key = docSnap.id;
         if (!reslist.includes(res.resid)) {
           reslist.push(res.resid);
         }
-        menulist.push(res.key)
+        menulist.push(res.key);
       });
       this.budgetlist = reslist;
-      this.menulist=menulist
-      console.log(this.menulist)
+      this.menulist = menulist;
+      console.log(this.menulist);
       this.updateResSubscribers();
       this.initResOnSnapshot();
     });
@@ -277,45 +341,42 @@ class DataModel {
   async getresinfo(id) {
     const resDocSnap = await getDoc(doc(db, "restaurants", id));
     const res = resDocSnap.data();
+    // this.updateResSubscribers();
     return res;
   }
 
-  async menuOnSnapshot(id){
+  async menuOnSnapshot(id) {
     const q = query(collection(db, "menu"), where("resid", "==", id));
-    var menulist=[]
-    var newlist=[]
-    const menuDocRep=await getDocs(q)
-    menuDocRep.forEach((doc)=>{
-      const res=doc.data()
-      res.key=doc.id
-      menulist.push(res)
-    })
+    var menulist = [];
+    var newlist = [];
+    const menuDocRep = await getDocs(q);
+    menuDocRep.forEach((doc) => {
+      const res = doc.data();
+      res.key = doc.id;
+      menulist.push(res);
+    });
     // console.log(this.comparemenu(menulist))
-    return this.comparemenu(menulist)
-    
+    this.updateResSubscribers();
+    return this.comparemenu(menulist);
   }
 
-  comparemenu(menulist){
-    var nowlsist=this.menulist
-    for(u of menulist){
-      if(nowlsist.includes(u.key)){
-        u.req=true
-      }
-      else{
-        u.req=false
+  comparemenu(menulist) {
+    var nowlsist = this.menulist;
+    for (u of menulist) {
+      if (nowlsist.includes(u.key)) {
+        u.req = true;
+      } else {
+        u.req = false;
       }
     }
-    return menulist
-  }
-
-  getMenu(){
-    return this.menulist
+    return menulist;
   }
 
   getRes() {
     return this.restsearchlist;
   }
 
+  //recipe list
   subscribeToRecUpdates(callback) {
     this.recsubscribers.push(callback);
   }
@@ -395,7 +456,6 @@ class DataModel {
       this.updateRecSubscribers();
     });
   }
-
 }
 
 let theDataModel = undefined;
