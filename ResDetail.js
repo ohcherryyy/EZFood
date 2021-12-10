@@ -13,16 +13,141 @@ import {
 } from "react-native";
 import { getDataModel } from "./DataModel";
 import { SearchBar } from "react-native-elements";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 export function RestDetailScreen({ navigation, route }) {
   const { userkey, restId } = route.params;
-  
+  const tablist = ["menu", "comment"];
+  const dataModel = getDataModel();
+  const [info, setinfo] = useState(["Default"]);
+  const [tab, settab] = useState(tablist[0]);
+  const [menulist, setmenulist] = useState(["Nothing found"]);
+
+  useEffect(async () => {
+    setinfo(await dataModel.getresinfo(restId));
+    setmenulist(await dataModel.menuOnSnapshot(restId))
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.filtertext}>{currentUserId}</Text>
-      <Text style={styles.filtertext}>{restId}</Text>
-      <Button title="Return" onPress={()=>navigation.goBack()}/>
+      <View style={styles.titleContainer}>
+        <View style={styles.titleButton}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <MaterialCommunityIcons name="arrow-left" color="black" size={26} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.titleitem}>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{info.name}</Text>
+        </View>
+        <View style={styles.titleButton}>
+          <TouchableOpacity>
+            <MaterialCommunityIcons name="heart-outline" size={26} />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={styles.infoContainer}>
+        <View style={styles.infoRow}>
+          <View style={styles.infotitle}>
+            <Text style={styles.infotitletxt}>Address:</Text>
+          </View>
+          <View style={styles.infoContent}>
+            <Text style={styles.infocontenttxt}>{info.address}</Text>
+          </View>
+        </View>
+        <View style={styles.infoRow}>
+          <View style={styles.infotitle}>
+            <Text style={styles.infotitletxt}>Time:</Text>
+          </View>
+          <View style={styles.infoContent}>
+            <Text style={styles.infocontenttxt}>{info.time}</Text>
+          </View>
+        </View>
+        <View style={styles.infoRow}>
+          <View style={styles.infotitle}>
+            <Text style={styles.infotitletxt}>Cuisine:</Text>
+          </View>
+          <View style={styles.infoContent}>
+            <Text style={styles.infocontenttxt}>{info.cuisine}</Text>
+          </View>
+        </View>
+        <View style={styles.infoRow}>
+          <View style={styles.infoItem}>
+            <View style={styles.infotitletwo}>
+              <Text style={styles.infotitletxt}>Rating:</Text>
+            </View>
+            <View style={styles.infoContenttwo}>
+              <Text style={styles.infocontenttxt}>{info.rating}</Text>
+            </View>
+          </View>
+          <View style={styles.infoItem}>
+            <View style={styles.infotitletwo}>
+              <Text style={styles.infotitletxt}>Price:</Text>
+            </View>
+            <View style={styles.infoContenttwo}>
+              <Text style={styles.infocontenttxt}>{info.price}</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View style={styles.tabContainer}>
+        <View style={styles.tabItems}>
+          <TouchableOpacity onPress={() => settab(tablist[0])}>
+            <Text
+              style={tab === "menu" ? styles.tabSelected : styles.tabUnselected}
+            >
+              Menu
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.tabItems}>
+          <TouchableOpacity onPress={() => settab(tablist[1])}>
+            <Text
+              style={
+                tab === "comment" ? styles.tabSelected : styles.tabUnselected
+              }
+            >
+              Comments
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={styles.listContainer}>
+        {tab === "menu" ? (
+          <FlatList
+            contentContainerStyle={styles.menuContainer}
+            data={menulist}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => {
+              return (
+                <View style={styles.menuRow}>
+                  <View style={styles.menuname}>
+                    <Text
+                      style={{
+                        fontSize: 17,
+                        color: item.req ? "black" : "grey",
+                      }}
+                    >
+                      {item.name}
+                    </Text>
+                  </View>
+                  <View style={styles.menuprice}>
+                    <Text
+                      style={{
+                        fontSize: 17,
+                        color: item.req ? "black" : "grey",
+                      }}
+                    >
+                      ${item.price}
+                    </Text>
+                  </View>
+                </View>
+              );
+            }}
+          ></FlatList>
+        ) : (
+          <View></View>
+        )}
+      </View>
     </View>
   );
 }
@@ -32,109 +157,130 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     paddingTop: 50,
-  },
-  searchbar: {
-    flex: 0.05,
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    paddingTop: 30,
-    paddingBottom: 30,
     paddingLeft: 10,
     paddingRight: 10,
   },
-  searchbarstyle: {
-    flex: 1,
-    width: "100%",
-    backgroundColor: "#fff",
-    borderColor: "#fff",
-  },
-  filtercontainer: {
+  titleContainer: {
     flex: 0.1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingBottom: 20,
-  },
-  filterItem: {
-    width: "100%",
-    height: "50%",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  filterTitle: {
-    flex: 0.4,
-    justifyContent: "center",
-    alignItems: "flex-start",
-    width: "100%",
-  },
-  filterCont: {
-    flex: 0.6,
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignItems: "center",
-  },
-
-  filtertext: {
-    fontSize: 15,
-    fontWeight: "bold",
-  },
-
-  listContainer: {
-    flex: 0.85,
-    paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
     width: "100%",
   },
-  listContentContainer: {
-    justifyContent: "center",
-  },
-  listItem: {
-    flex: 1,
-    justifyContent: "center",
+  titleButton: {
+    flex: 0.1,
     alignItems: "center",
-    flexDirection: "row",
-    paddingBottom: 30,
-    width: "100%",
-    height: 100,
+    justifyContent: "center",
   },
-  listItemimgContainer: {
-    flex: 0.2,
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    flexDirection: "row",
-    resizeMode: "cover",
-    width: 100,
-    height: 70,
-    borderRadius: 8,
-  },
-  listItemCont: {
+  titleitem: {
     flex: 0.8,
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  infoContainer: {
+    flex: 0.25,
     flexDirection: "column",
-    paddingLeft: 20,
-  },
-  listItemContTitle: {
-    flex: 0.7,
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  listItemConDetail: {
-    flex: 0.3,
     justifyContent: "flex-start",
     alignItems: "center",
-    flexDirection: "row",
+    paddingLeft: 10,
+    paddingRight: 10,
   },
-  listItemText: {
-    flex: 0.3,
+  infoRow: {
+    width: "100%",
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  infotitle: {
+    flex: 0.25,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  infoContent: {
+    flex: 0.75,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  infotitletwo: {
+    flex: 0.5,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  infoContenttwo: {
+    flex: 0.5,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  infotitletxt: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  infocontenttxt: {
+    fontSize: 16,
+  },
+  infoItem: {
+    flex: 0.5,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  tabContainer: {
+    flex: 0.03,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    width: "100%",
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 10,
+  },
+  tabItems: {
+    flex: 0.25,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  tabSelected: {
     fontSize: 15,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
+  tabUnselected: {
+    fontSize: 15,
+  },
+  listContainer: {
+    flex: 0.62,
+    width: "100%",
+  },
+  menuContainer: {
+    justifyContent: "center",
+  },
+  menuRow: {
+    flex: 1,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingTop:20,
+    paddingLeft:10,
+    paddingRight:10
+  },
+  menuTitletxt: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  menuname: {
+    flex: 0.5,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  menuprice: {
+    flex: 0.5,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
 });
