@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Button,
   Switch,
+  Image
 } from "react-native";
 import { getDataModel } from "./DataModel";
 import { SearchBar } from "react-native-elements";
@@ -36,7 +37,7 @@ export function RestaurantScreen({ navigation, route }) {
       <View style={styles.searchbar}>
         <SearchBar
           containerStyle={styles.searchbarstyle}
-          placeholder="Find your recipe"
+          placeholder="Find your restaurants"
           platform="ios"
           value={search}
           onChangeText={(value) => {
@@ -97,12 +98,12 @@ export function RestaurantScreen({ navigation, route }) {
                   })
                 }
               >
-                {/* <Image
+                <Image
                   style={styles.listItemimgContainer}
                   source={{
                     uri: item.image,
                   }}
-                /> */}
+                />
                 <View style={styles.listItemCont}>
                   <Text numberOfLines={100} style={styles.listItemContTitle}>
                     {item.name}

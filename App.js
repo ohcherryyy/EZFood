@@ -87,7 +87,6 @@ export default function App() {
         headerShown: false
       }}
     >
-        <Stack.Screen name="Home" component={HomeTabs} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="Budget" component={SignupBudgetScreen} />
@@ -95,6 +94,7 @@ export default function App() {
         <Stack.Screen name="recipeCheck" component={RecipeCheckScreen} />
         <Stack.Screen name="recipeDetail" component={RecipeDetailScreen} />
         <Stack.Screen name="recipeCook" component={RecipeCookScreen} />
+        <Stack.Screen name="Home" component={HomeTabs} />
     </Stack.Navigator>
     </NavigationContainer>
   );

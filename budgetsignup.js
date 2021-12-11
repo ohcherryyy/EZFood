@@ -52,7 +52,7 @@ export function SignupBudgetScreen({ navigation, route }) {
 
         <View style={loginStyles.loginRow}>
           <View style={loginStyles.loginLabelContainer}>
-            <Text style={loginStyles.loginLabelText}>Monthly Budget: </Text>
+            <Text style={loginStyles.loginLabelText}>Budget: </Text>
           </View>
           <View style={loginStyles.loginInputContainer}>
             <TextInput
