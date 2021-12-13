@@ -10,7 +10,7 @@ import {
   StyleSheet,
   Button,
   Switch,
-  Image
+  Image,
 } from "react-native";
 import { getDataModel } from "./DataModel";
 import { SearchBar } from "react-native-elements";
@@ -18,8 +18,12 @@ import { SearchBar } from "react-native-elements";
 export function RestaurantScreen({ navigation, route }) {
   const dataModel = getDataModel();
   const { currentUserId } = route.params;
+  // console.log("params")
+  // console.log(currentUserId)
   const userkey = dataModel.getUserForID(currentUserId);
-  dataModel.getBudget(userkey);
+  // console.log("initial")
+  // console.log(userkey)
+  dataModel.getBudget(userkey?userkey:currentUserId);
   const [search, setSearch] = useState("");
   const [reslist, setReslist] = useState(dataModel.getRes());
   const [budget, setBudget] = useState(dataModel.getshowbudget());
@@ -53,13 +57,13 @@ export function RestaurantScreen({ navigation, route }) {
           </View>
           <View style={styles.filterCont}>
             <TouchableOpacity onPress={() => setmeal(0)}>
-              <Text>Breakfast</Text>
+              <Text style={meal===0?{color:"#1a0ec2"}:{color:"black"}}>Breakfast</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setmeal(1)}>
-              <Text>Lunch</Text>
+              <Text style={meal===1?{color:"#1a0ec2"}:{color:"black"}}>Lunch</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setmeal(2)}>
-              <Text>Dinner</Text>
+              <Text style={meal===2?{color:"#1a0ec2"}:{color:"black"}}>Dinner</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -93,7 +97,7 @@ export function RestaurantScreen({ navigation, route }) {
                 style={styles.listItem}
                 onPress={() =>
                   navigation.navigate("ResDetail", {
-                    userkey:userkey,
+                    userkey: userkey ? userkey : currentUserId,
                     restId: item.key,
                   })
                 }

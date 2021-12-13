@@ -34,7 +34,7 @@ function HomeTabs({route}) {
           component={RestaurantScreen}
           initialParams={{currentUserId:userId}}
           options={{
-            tabBarLabel: 'Recipe',
+            tabBarLabel: 'Restaurant',
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="silverware" color={color} size={26} />
             ),

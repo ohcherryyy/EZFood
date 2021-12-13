@@ -14,14 +14,14 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 export function RecipeDetailScreen({ navigation, route }) {
   const dataModel = getDataModel();
-  const { currentUserId } = route.params;
-  const { recipeKey } = route.params;
+  const { recipeKey, currentUserId } = route.params;
   const userkey = dataModel.getUserForID(currentUserId);
   const [recipeItem, setRecipeItem] = useState(["Default"]);
-  // const [fav, setfav] = useState(dataModel.initfavlist(userkey, recipeKey));
+  const [fav, setfav] = useState(dataModel.initfavlist(currentUserId, recipeKey));
 
   useEffect(async () => {
     setRecipeItem(await dataModel.getRecipeKey(recipeKey));
+    setfav(dataModel.initfavlist(currentUserId, recipeKey));
   }, []);
 
   return (
@@ -39,38 +39,37 @@ export function RecipeDetailScreen({ navigation, route }) {
         </View>
         <View style={styles.titleButton}>
           <TouchableOpacity
-          // onPress={() => {
-          //   console.log(fav);
-          //   fav
-          //     ? dataModel.removefav(userkey)
-          //     : dataModel.addtofav(userkey, {
-          //         name: info.name,
-          //         cuisine:info.cuisine,
-          //         price:info.price,
-          //         rating:info.rating,
-          //         id: restId,
-          //         category: "Restaurants",
-          //       });
-          //   setfav(!fav);
-          // }}
+          onPress={() => {   
+            fav
+              ? dataModel.removefav(currentUserId)
+              : dataModel.addtofav(currentUserId, {
+                  name: recipeItem.name,
+                  cooktime:recipeItem.cooktime,
+                  mealtype:recipeItem.mealtype,
+                  rating:recipeItem.rating,
+                  image:recipeItem.image,
+                  id: recipeKey,
+                  category: "Recipes",
+                });
+            setfav(!fav);
+          }}
           >
             <MaterialCommunityIcons
-              name="heart-outline"
-              // name={fav ? "heart" : "heart-outline"}
+              name={fav ? "heart" : "heart-outline"}
               size={26}
             />
           </TouchableOpacity>
         </View>
       </View>
 
-      <View style={styles.itemImage}>
+      {/* <View style={styles.itemImage}>
         <Image
           style={styles.imagestyle}
           source={{
             uri: recipeItem.image,
           }}
         />
-      </View>
+      </View> */}
 
       <View style={styles.infoContainer}>
         <View style={styles.infoItem}>
