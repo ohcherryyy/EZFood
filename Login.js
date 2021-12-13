@@ -104,6 +104,8 @@ export function LoginScreen({ navigation, route }) {
                   params: { currentUserId: user.key },
                   screen: "Restaurant",
                 });
+                console.log("login")
+                console.log(user.key)
               } catch (error) {
                 Alert.alert("Login Error", error.message, [{ text: "OK" }]);
               }

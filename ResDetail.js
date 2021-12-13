@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Button,
   Switch,
+  Image
 } from "react-native";
 import { getDataModel } from "./DataModel";
 import { SearchBar } from "react-native-elements";
@@ -23,6 +24,7 @@ export function RestDetailScreen({ navigation, route }) {
   const [tab, settab] = useState(tablist[0]);
   const [menulist, setmenulist] = useState(["Nothing found"]);
   const [fav, setfav] = useState(dataModel.initfavlist(userkey, restId));
+  const displaymenu = dataModel.showbudget;
 
   useEffect(async () => {
     setinfo(await dataModel.getresinfo(restId));
@@ -44,14 +46,14 @@ export function RestDetailScreen({ navigation, route }) {
         <View style={styles.titleButton}>
           <TouchableOpacity
             onPress={() => {
-              console.log(fav);
               fav
                 ? dataModel.removefav(userkey)
                 : dataModel.addtofav(userkey, {
                     name: info.name,
-                    cuisine:info.cuisine,
-                    price:info.price,
-                    rating:info.rating,
+                    cuisine: info.cuisine,
+                    price: info.price,
+                    rating: info.rating,
+                    image: info.image,
                     id: restId,
                     category: "Restaurants",
                   });
@@ -65,6 +67,7 @@ export function RestDetailScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
       </View>
+      <Image style={styles.imgContainer} source={{uri:info.image}} />
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
           <View style={styles.infotitle}>
@@ -142,20 +145,28 @@ export function RestDetailScreen({ navigation, route }) {
                 <View style={styles.menuRow}>
                   <View style={styles.menuname}>
                     <Text
-                      style={{
-                        fontSize: 17,
-                        color: item.req ? "black" : "grey",
-                      }}
+                      style={
+                        displaymenu
+                          ? {
+                              fontSize: 17,
+                              color: item.req ? "black" : "grey",
+                            }
+                          : styles.txtorginal
+                      }
                     >
                       {item.name}
                     </Text>
                   </View>
                   <View style={styles.menuprice}>
                     <Text
-                      style={{
-                        fontSize: 17,
-                        color: item.req ? "black" : "grey",
-                      }}
+                      style={
+                        displaymenu
+                          ? {
+                              fontSize: 17,
+                              color: item.req ? "black" : "grey",
+                            }
+                          : styles.txtorginal
+                      }
                     >
                       ${item.price}
                     </Text>
@@ -181,6 +192,7 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingLeft: 10,
     paddingRight: 10,
+    paddingBottom:30
   },
   titleContainer: {
     flex: 0.1,
@@ -199,13 +211,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  imgContainer:{
+    flex:0.2,
+    justifyContent:"center",
+    resizeMode:"cover",
+    width:350,
+    paddingLeft:10,
+    paddingRight:10,
+    paddingBottom:20
+  },
   infoContainer: {
-    flex: 0.25,
+    flex: 0.2,
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
     paddingLeft: 10,
     paddingRight: 10,
+    paddingTop:20
   },
   infoRow: {
     width: "100%",
@@ -256,6 +278,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 10,
+    paddingBottom:10
   },
   tabItems: {
     flex: 0.25,
@@ -271,8 +294,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   listContainer: {
-    flex: 0.62,
+    flex: 0.57,
     width: "100%",
+    paddingBottom:20
   },
   menuContainer: {
     justifyContent: "center",
@@ -302,5 +326,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
+  },
+  txtorginal: {
+    fontSize: 17,
+    color: "black",
   },
 });

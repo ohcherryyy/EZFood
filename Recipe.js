@@ -140,7 +140,12 @@ export function RecipeScreen({ navigation, route }) {
             return (
               <TouchableOpacity
                 style={styles.listItem}
-                onPress={() => navigation.navigate("recipeDetail", {recipeKey: item.key, currentUserId: userkey},)}
+                onPress={() =>
+                  navigation.navigate("recipeDetail", {
+                    recipeKey: item.key,
+                    currentUserId: userkey,
+                  })
+                }
               >
                 <Image
                   style={styles.listItemimgContainer}

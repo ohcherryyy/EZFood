@@ -39,7 +39,11 @@ export function FavoriteScreen({ navigation, route }) {
         <View style={styles.tabItems}>
           <TouchableOpacity onPress={() => settab(tablist[0])}>
             <Text
-              style={tab === "Restaurants" ? styles.tabSelected : styles.tabUnselected}
+              style={
+                tab === "Restaurants"
+                  ? styles.tabSelected
+                  : styles.tabUnselected
+              }
             >
               Restaurants
             </Text>
@@ -57,84 +61,95 @@ export function FavoriteScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
       </View>
-    {tab===tablist[0]?<View style={styles.listContainer}>
-        <FlatList
-          contentContainerStyle={styles.listContentContainer}
-          data={favlist}
-          renderItem={({ item }) => {
-            if(item.category===tablist[0]){
-              return (
-              <TouchableOpacity
-                style={styles.listItem}
-                onPress={() =>
-                  navigation.navigate("ResDetail", {
-                    userkey:userkey,
-                    restId: item.id,
-                  })
-                }
-              >
-                {/* <Image
-                  style={styles.listItemimgContainer}
-                  source={{
-                    uri: item.image,
-                  }}
-                /> */}
-                <View style={styles.listItemCont}>
-                  <Text numberOfLines={100} style={styles.listItemContTitle}>
-                    {item.name}
-                  </Text>
-                  <View style={styles.listItemConDetail}>
-                    <Text style={styles.listItemText}>{item.cuisine}</Text>
-                    <Text style={styles.listItemText}>{item.price} </Text>
-                    <Text style={styles.listItemText}>{item.rating}/5</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            );
-            }
-            
-          }}
-        />
-      </View>:<View style={styles.listContainer}>
-        <FlatList
-          contentContainerStyle={styles.listContentContainer}
-          data={favlist}
-          renderItem={({ item }) => {
-            if(item.category===tablist[1]){
-              return (
-              <TouchableOpacity
-                style={styles.listItem}
-                onPress={() =>
-                  navigation.navigate("ResDetail", {
-                    userkey:userkey,
-                    restId: item.id,
-                  })
-                }
-              >
-                {/* <Image
-                  style={styles.listItemimgContainer}
-                  source={{
-                    uri: item.image,
-                  }}
-                /> */}
-                <View style={styles.listItemCont}>
-                  <Text numberOfLines={100} style={styles.listItemContTitle}>
-                    {item.name}
-                  </Text>
-                  <View style={styles.listItemConDetail}>
-                    <Text style={styles.listItemText}>{item.cuisine}</Text>
-                    <Text style={styles.listItemText}>{item.price} </Text>
-                    <Text style={styles.listItemText}>{item.rating}/5</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            );
-            }
-            
-          }}
-        />
-      </View>}
-      
+      {tab === tablist[0] ? (
+        <View style={styles.listContainer}>
+          <FlatList
+            contentContainerStyle={styles.listContentContainer}
+            data={favlist}
+            renderItem={({ item }) => {
+              if (item.category === tablist[0]) {
+                return (
+                  <TouchableOpacity
+                    style={styles.listItem}
+                    onPress={() =>
+                      navigation.navigate("ResDetail", {
+                        userkey: userkey,
+                        restId: item.id,
+                      })
+                    }
+                  >
+                    <Image
+                      style={styles.listItemimgContainer}
+                      source={{
+                        uri: item.image,
+                      }}
+                    />
+                    <View style={styles.listItemCont}>
+                      <Text
+                        numberOfLines={100}
+                        style={styles.listItemContTitle}
+                      >
+                        {item.name}
+                      </Text>
+                      <View style={styles.listItemConDetail}>
+                        <Text style={styles.listItemText}>{item.cuisine}</Text>
+                        <Text style={styles.listItemText}>{item.price} </Text>
+                        <Text style={styles.listItemText}>{item.rating}/5</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                );
+              }
+            }}
+          />
+        </View>
+      ) : (
+        <View style={styles.listContainer}>
+          <FlatList
+            contentContainerStyle={styles.listContentContainer}
+            data={favlist}
+            renderItem={({ item }) => {
+              if (item.category === tablist[1]) {
+                return (
+                  <TouchableOpacity
+                    style={styles.listItem}
+                    onPress={() =>
+                      navigation.navigate("recipeDetail", {
+                        recipeKey: item.key,
+                        currentUserId: userkey,
+                      })
+                    }
+                  >
+                    <Image
+                      style={styles.listItemimgContainer}
+                      source={{
+                        uri: item.image,
+                      }}
+                    />
+                    <View style={styles.listItemCont}>
+                      <Text
+                        numberOfLines={100}
+                        style={styles.listItemContTitle}
+                      >
+                        {item.name}
+                      </Text>
+                      <View style={styles.listItemConDetail}>
+                        <Text style={styles.listItemText}>
+                          {item.cooktime}min
+                        </Text>
+                        <Text style={styles.listItemText}>
+                          {item.mealtype}{" "}
+                        </Text>
+                        <Text style={styles.listItemText}>{item.rating}/5</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                );
+              }
+            }}
+          />
+        </View>
+      )}
     </View>
   );
 }
@@ -222,7 +237,7 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingLeft: 10,
     paddingRight: 10,
-    paddingBottom: 10,
+    paddingBottom: 20,
   },
   tabItems: {
     flex: 0.3,

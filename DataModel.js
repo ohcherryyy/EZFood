@@ -189,8 +189,6 @@ class DataModel {
   }
 
   getfav(){
-    console.log("get")
-    console.log(this.favlist)
     return this.favlist
   }
 
@@ -224,7 +222,6 @@ class DataModel {
   async removefav(key) {
     const q = doc(db, "users", key);
     const favRef = doc(q, "favorite",this.deletekey);
-    console.log(this.deletekey);
     if (this.deletekey) {
       await deleteDoc(favRef);
     }
