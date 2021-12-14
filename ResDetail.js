@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Alert } from "react-native";
-import CheckCircleOutlined from "@ant-design/icons";
 import {
   TextInput,
   Text,
@@ -10,11 +8,12 @@ import {
   StyleSheet,
   Button,
   Switch,
-  Image
+  Image,
 } from "react-native";
+import { Rating, AirbnbRating } from "react-native-elements";
 import { getDataModel } from "./DataModel";
-import { SearchBar } from "react-native-elements";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { stringLength } from "@firebase/util";
 
 export function RestDetailScreen({ navigation, route }) {
   const { userkey, restId } = route.params;
@@ -25,11 +24,17 @@ export function RestDetailScreen({ navigation, route }) {
   const [menulist, setmenulist] = useState(["Nothing found"]);
   const [fav, setfav] = useState(dataModel.initfavlist(userkey, restId));
   const displaymenu = dataModel.showbudget;
+  const [commentlist, setcommentlist] = useState(
+    dataModel.initcomment(restId, userkey)
+  );
+  const [like, setlike] = useState(false);
+  const [likenum, setlikenum] = useState(0);
 
   useEffect(async () => {
     setinfo(await dataModel.getresinfo(restId));
     setmenulist(await dataModel.menuOnSnapshot(restId));
     setfav(dataModel.initfavlist(userkey, restId));
+    setcommentlist(dataModel.initcomment(restId, userkey));
   }, []);
 
   return (
@@ -67,7 +72,7 @@ export function RestDetailScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
       </View>
-      <Image style={styles.imgContainer} source={{uri:info.image}} />
+      <Image style={styles.imgContainer} source={{ uri: info.image }} />
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
           <View style={styles.infotitle}>
@@ -134,8 +139,9 @@ export function RestDetailScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.listContainer}>
+      
         {tab === "menu" ? (
+          <View style={styles.listContainer}>
           <FlatList
             contentContainerStyle={styles.menuContainer}
             data={menulist}
@@ -174,11 +180,87 @@ export function RestDetailScreen({ navigation, route }) {
                 </View>
               );
             }}
-          ></FlatList>
+          ></FlatList></View>
         ) : (
-          <View></View>
+          <View style={styles.listContainer}>
+            <FlatList
+              contentContainerStyle={styles.menuContainer}
+              data={commentlist}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => {
+                if (item.thumbs.includes(userkey)) {
+                  setlike(true);
+                }
+                setlikenum(Number(item.thumbs.length));
+                return (
+                  <View style={styles.commentcontainer}>
+                    <View style={styles.commentrow}>
+                      <View style={styles.rowleft}>
+                        <Text style={{ fontSize: 17, fontWeight: "bold" }}>
+                          {item.username}
+                        </Text>
+                      </View>
+                      <View style={styles.rowright}>
+                        <Rating
+                          readonly
+                          fractions={1}
+                          startingValue={item.rating}
+                          imageSize={20}
+                        />
+                      </View>
+                    </View>
+                    <View style={styles.commentrow}>
+                      <Text>{item.content}</Text>
+                    </View>
+                    <View style={styles.commentrow}>
+                      <View style={styles.rowleft}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            like
+                              ? dataModel.cancellikes(restId, item.key, userkey)
+                              : dataModel.thumbsup(restId, item.key, userkey);
+                            setlike(!like);
+                            like
+                              ? setlikenum(item.thumbs.length - 1)
+                              : setlikenum(item.thumbs.length + 1);
+                            console.log(like);
+                            console.log(likenum);
+                          }}
+                        >
+                          <MaterialCommunityIcons
+                            size={18}
+                            name={like ? "thumb-up" : "thumb-up-outline"}
+                          />
+                        </TouchableOpacity>
+                        <Text> {likenum}</Text>
+                      </View>
+                      <View style={styles.rowright}>
+                        <Text style={{ color: "grey", fontStyle: "italic" }}>
+                          Comment on{" "}
+                        </Text>
+                        <Text style={{ color: "grey", fontStyle: "italic" }}>
+                          {item.time.toDate().toLocaleDateString("en-us", {
+                            month: "numeric",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "numeric",
+                          })}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                );
+              }}
+            ></FlatList>
+            <View style={styles.editbutton}>
+              <TouchableOpacity style={styles.buttonstyle}>
+                <Text>Comment</Text>
+              </TouchableOpacity>
+              
+            </View>
+          </View>
         )}
-      </View>
+
     </View>
   );
 }
@@ -192,7 +274,7 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingLeft: 10,
     paddingRight: 10,
-    paddingBottom:30
+    paddingBottom: 30,
   },
   titleContainer: {
     flex: 0.1,
@@ -211,14 +293,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  imgContainer:{
-    flex:0.2,
-    justifyContent:"center",
-    resizeMode:"cover",
-    width:350,
-    paddingLeft:10,
-    paddingRight:10,
-    paddingBottom:20
+  imgContainer: {
+    flex: 0.2,
+    justifyContent: "center",
+    resizeMode: "cover",
+    width: 350,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 20,
   },
   infoContainer: {
     flex: 0.2,
@@ -227,7 +309,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingLeft: 10,
     paddingRight: 10,
-    paddingTop:20
+    paddingTop: 20,
   },
   infoRow: {
     width: "100%",
@@ -278,7 +360,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 10,
-    paddingBottom:10
+    paddingBottom: 20,
   },
   tabItems: {
     flex: 0.25,
@@ -294,9 +376,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   listContainer: {
-    flex: 0.57,
+    flex: 0.47,
     width: "100%",
-    paddingBottom:20
+    paddingBottom: 10,
   },
   menuContainer: {
     justifyContent: "center",
@@ -307,7 +389,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingTop: 20,
+    paddingBottom: 20,
     paddingLeft: 10,
     paddingRight: 10,
   },
@@ -316,13 +398,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   menuname: {
-    flex: 0.5,
+    flex: 0.8,
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
   },
   menuprice: {
-    flex: 0.5,
+    flex: 0.2,
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
@@ -330,5 +412,52 @@ const styles = StyleSheet.create({
   txtorginal: {
     fontSize: 17,
     color: "black",
+  },
+  commentcontainer: {
+    width: "100%",
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  commentrow: {
+    flex: 1,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "flex-end",
+    paddingBottom: 10,
+  },
+  rowleft: {
+    flex: 0.5,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  rowright: {
+    flex: 0.5,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  editbutton: {
+    flex: 0.25,
+    width: "100%",
+    height:"5%",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingRight:10,
+    paddingLeft:10
+  },
+  buttonstyle:{
+    flex:1,
+    width:"100%",
+    justifyContent:"center",
+    alignItems:"center",
+    borderWidth:1,
+    borderColor:"black",
+    borderRadius:8,
   },
 });
