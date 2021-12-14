@@ -16,6 +16,8 @@ import {
   updateDoc,
   getAuth,
   where,
+  arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import { firebaseConfig } from "./Secrets";
 
@@ -41,10 +43,13 @@ class DataModel {
     this.ressubscribers = [];
     this.recsubscribers = [];
     this.restsearchlist = [];
+    this.resdetasubscribers=[]
     this.menulist = [];
     this.showbudget = false;
     this.budgetlist = [];
     this.budgetprice = [];
+    this.commentlist=[];
+    this.like=false;
     this.recipesearchlist = [];
     this.ingredientslist=[]
     this.initUsersOnSnapshot();
@@ -336,10 +341,20 @@ class DataModel {
     });
   }
 
+  subscribeToResDetaUpdates(callback) {
+    this.resdetasubscribers.push(callback);
+  }
+
+  updateResDetaSubscribers() {
+    for (let sub of this.resdetasubscribers) {
+      sub(); // just tell them there's an update
+    }
+  }
+
   async getresinfo(id) {
     const resDocSnap = await getDoc(doc(db, "restaurants", id));
     const res = resDocSnap.data();
-    // this.updateResSubscribers();
+    this.updateResDetaSubscribers();
     return res;
   }
 
@@ -354,7 +369,7 @@ class DataModel {
       menulist.push(res);
     });
     // console.log(this.comparemenu(menulist))
-    this.updateResSubscribers();
+    this.updateResDetaSubscribers();
     return this.comparemenu(menulist);
   }
 
@@ -372,6 +387,41 @@ class DataModel {
 
   getRes() {
     return this.restsearchlist;
+  }
+
+  initcomment(key,id){
+    const q = doc(db, "restaurants", key);
+    const comRef = collection(q, "comment");
+    onSnapshot(comRef, (qSnap) => {
+       let comlist=[]
+        qSnap.forEach((docSnap) => {
+          let com = docSnap.data();
+          com.key = docSnap.id;
+          for (u of com.thumbs){
+            if(u===id){
+              this.like=true
+            }
+          }
+          comlist.push(com)
+        });
+     this.commentlist=comlist
+    });
+    this.updateResDetaSubscribers()
+    return this.commentlist
+  }
+
+  async thumbsup(resid, comid,userkey){
+    const q = doc(db, "restaurants", resid);
+    const comRef = doc(q, "comment",comid);
+    await updateDoc(comRef,{thumbs:arrayUnion(userkey)})
+    this.updateResDetaSubscribers()
+  }
+
+  async cancellikes(resid,comid,userkey){
+    const q = doc(db, "restaurants", resid);
+    const comRef = doc(q, "comment",comid);
+    await updateDoc(comRef,{thumbs:arrayRemove(userkey)})
+    this.updateResDetaSubscribers()
   }
 
   //recipe list
