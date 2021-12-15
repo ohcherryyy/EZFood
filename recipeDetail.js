@@ -61,7 +61,51 @@ export function RecipeDetailScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
       </View>
-
+      <Image style={styles.imgContainer} source={{ uri: recipeItem.image }} />
+      <View style={styles.infoContainer}>
+        <View style={styles.infoRow}>
+          <View style={styles.infotitle}>
+            <Text style={styles.infotitletxt}>Cooking time: </Text>
+          </View>
+          <View style={styles.infoContent}>
+            <Text style={styles.infocontenttxt}>{recipeItem.cooktime} min</Text>
+          </View>
+        </View>
+        <View style={styles.infoRow}>
+          <View style={styles.infotitle}>
+            <Text style={styles.infotitletxt}>Meal type:</Text>
+          </View>
+          <View style={styles.infoContent}>
+            <Text style={styles.infocontenttxt}>{recipeItem.mealtype}</Text>
+          </View>
+        </View>
+        <View style={styles.infoRow}>
+          <View style={styles.infotitle}>
+            <Text style={styles.infotitletxt}>Rating: </Text>
+          </View>
+          <View style={styles.infoContent}>
+            <Text style={styles.infocontenttxt}>{recipeItem.rating}/5</Text>
+          </View>
+        </View>
+        <View style={styles.infoRow}>
+          <View style={styles.infoItem}>
+            <View style={styles.infotitletwo}>
+              <Text style={styles.infotitletxt}>Rating:</Text>
+            </View>
+            <View style={styles.infoContenttwo}>
+              <Text style={styles.infocontenttxt}></Text>
+            </View>
+          </View>
+          <View style={styles.infoItem}>
+            <View style={styles.infotitletwo}>
+              <Text style={styles.infotitletxt}>Price:</Text>
+            </View>
+            <View style={styles.infoContenttwo}>
+              <Text style={styles.infocontenttxt}></Text>
+            </View>
+          </View>
+        </View>
+      </View>
       {/* <View style={styles.itemImage}>
         <Image
           style={styles.imagestyle}
@@ -71,7 +115,7 @@ export function RecipeDetailScreen({ navigation, route }) {
         />
       </View> */}
 
-      <View style={styles.infoContainer}>
+      {/* <View style={styles.infoContainer}>
         <View style={styles.infoItem}>
           <Text style={styles.infotxt}>
             Cooking Time: {recipeItem.cooktime}min
@@ -93,7 +137,7 @@ export function RecipeDetailScreen({ navigation, route }) {
         >
           <Text style={styles.listItemText}>Start to Prepare!</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       {/* <View style={styles.listItemCont}>
         
@@ -173,29 +217,63 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  imagestyle: {
-    resizeMode: "center",
-    paddingBottom: 30,
-    width: 2000,
-    height: 2000,
+  imgContainer: {
+    flex: 0.2,
+    justifyContent: "center",
+    resizeMode: "cover",
+    width: 350,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 20,
   },
   infoContainer: {
     flex: 0.2,
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
-    width: "100%",
     paddingLeft: 10,
     paddingRight: 10,
+    paddingTop: 20,
+  },
+  infoRow: {
+    width: "100%",
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  infotitle: {
+    flex: 0.4,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  infoContent: {
+    flex: 0.75,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  infotitletwo: {
+    flex: 0.5,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  infoContenttwo: {
+    flex: 0.5,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  infotitletxt: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  infocontenttxt: {
+    fontSize: 16,
   },
   infoItem: {
-    flex: 1,
-    width: "100%",
-    justifyContent: "center",
+    flex: 0.5,
+    flexDirection: "row",
+    justifyContent: "flex-start",
     alignItems: "center",
-  },
-  infotxt: {
-    fontSize: 15,
   },
   buttonrow: {
     flex: 0.1,

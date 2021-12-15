@@ -91,6 +91,7 @@ export function RestaurantScreen({ navigation, route }) {
         <FlatList
           contentContainerStyle={styles.listContentContainer}
           data={reslist}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => {
             return (
               <TouchableOpacity
