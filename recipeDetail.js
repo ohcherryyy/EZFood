@@ -17,7 +17,10 @@ export function RecipeDetailScreen({ navigation, route }) {
   const { recipeKey, currentUserId } = route.params;
   const userkey = dataModel.getUserForID(currentUserId);
   const [recipeItem, setRecipeItem] = useState(["Default"]);
-  const [fav, setfav] = useState(dataModel.initfavlist(currentUserId, recipeKey));
+  const [fav, setfav] = useState(
+    dataModel.initfavlist(currentUserId, recipeKey)
+  );
+  const i = 0;
 
   useEffect(async () => {
     setRecipeItem(await dataModel.getRecipeKey(recipeKey));
@@ -39,20 +42,20 @@ export function RecipeDetailScreen({ navigation, route }) {
         </View>
         <View style={styles.titleButton}>
           <TouchableOpacity
-          onPress={() => {   
-            fav
-              ? dataModel.removefav(currentUserId)
-              : dataModel.addtofav(currentUserId, {
-                  name: recipeItem.name,
-                  cooktime:recipeItem.cooktime,
-                  mealtype:recipeItem.mealtype,
-                  rating:recipeItem.rating,
-                  image:recipeItem.image,
-                  id: recipeKey,
-                  category: "Recipes",
-                });
-            setfav(!fav);
-          }}
+            onPress={() => {
+              fav
+                ? dataModel.removefav(currentUserId)
+                : dataModel.addtofav(currentUserId, {
+                    name: recipeItem.name,
+                    cooktime: recipeItem.cooktime,
+                    mealtype: recipeItem.mealtype,
+                    rating: recipeItem.rating,
+                    image: recipeItem.image,
+                    id: recipeKey,
+                    category: "Recipes",
+                  });
+              setfav(!fav);
+            }}
           >
             <MaterialCommunityIcons
               name={fav ? "heart" : "heart-outline"}
@@ -72,116 +75,54 @@ export function RecipeDetailScreen({ navigation, route }) {
           </View>
         </View>
         <View style={styles.infoRow}>
-          <View style={styles.infotitle}>
-            <Text style={styles.infotitletxt}>Meal type:</Text>
-          </View>
-          <View style={styles.infoContent}>
-            <Text style={styles.infocontenttxt}>{recipeItem.mealtype}</Text>
-          </View>
-        </View>
-        <View style={styles.infoRow}>
-          <View style={styles.infotitle}>
-            <Text style={styles.infotitletxt}>Rating: </Text>
-          </View>
-          <View style={styles.infoContent}>
-            <Text style={styles.infocontenttxt}>{recipeItem.rating}/5</Text>
-          </View>
-        </View>
-        <View style={styles.infoRow}>
           <View style={styles.infoItem}>
             <View style={styles.infotitletwo}>
-              <Text style={styles.infotitletxt}>Rating:</Text>
+              <Text style={styles.infotitletxt}>Meal type: </Text>
             </View>
             <View style={styles.infoContenttwo}>
-              <Text style={styles.infocontenttxt}></Text>
+              <Text style={styles.infocontenttxt}>{recipeItem.mealtype}</Text>
             </View>
           </View>
           <View style={styles.infoItem}>
             <View style={styles.infotitletwo}>
-              <Text style={styles.infotitletxt}>Price:</Text>
+              <Text style={styles.infotitletxt}>Rating: </Text>
             </View>
             <View style={styles.infoContenttwo}>
-              <Text style={styles.infocontenttxt}></Text>
+              <Text style={styles.infocontenttxt}>{recipeItem.rating}/5</Text>
             </View>
           </View>
+        </View>
+        <View style={styles.infoRow}>
+          <View style={styles.infotitle}>
+            <Text style={styles.infotitletxt}>Nutrition:</Text>
+          </View>
+          <View style={styles.infoContent}></View>
         </View>
       </View>
-      {/* <View style={styles.itemImage}>
-        <Image
-          style={styles.imagestyle}
-          source={{
-            uri: recipeItem.image,
+      <View style={styles.listContainer}>
+        <FlatList
+          contentContainerStyle={styles.nutritionCont}
+          data={recipeItem.nutrition}
+          renderItem={({ item }) => {
+            return (
+              <View style={styles.nutritionitem}>
+                <Text style={styles.infocontenttxt}>{item}</Text>
+                <Text> </Text>
+              </View>
+            );
           }}
-        />
-      </View> */}
-
-      {/* <View style={styles.infoContainer}>
-        <View style={styles.infoItem}>
-          <Text style={styles.infotxt}>
-            Cooking Time: {recipeItem.cooktime}min
-          </Text>
-        </View>
-        <View style={styles.infoItem}>
-          <Text style={styles.infotxt}>Meal Type: {recipeItem.mealtype} </Text>
-        </View>
-        <View style={styles.infoItem}>
-          <Text style={styles.infotxt}>Rating: {recipeItem.rating}/5</Text>
-        </View>
+        ></FlatList>
       </View>
-      <View style={styles.buttonrow}>
+      <View style={styles.editbutton}>
         <TouchableOpacity
-          style={styles.listItem}
+          style={styles.buttonstyle}
           onPress={() =>
-            navigation.navigate("recipeCheck", { recipeKey: recipeKey })
+            navigation.navigate("recipeCheck", { recipeKey: recipeKey,currentUserId:currentUserId })
           }
         >
-          <Text style={styles.listItemText}>Start to Prepare!</Text>
+          <Text>Start to prepare!</Text>
         </TouchableOpacity>
-      </View> */}
-
-      {/* <View style={styles.listItemCont}>
-        
-        <View style={styles.listItemConDetail}>
-          <Text style={styles.listItemText}>
-            Cooking Time: {recipeItem.cooktime}min
-          </Text>
-          <Text style={styles.listItemText}>
-            Meal Type: {recipeItem.mealtype}{" "}
-          </Text>
-          <Text style={styles.listItemText}>Rating: {recipeItem.rating}/5</Text>
-          <Text style={styles.listItemText}>Nutrition:</Text>
-          <FlatList
-            contentContainerStyle={styles.listContentContainer}
-            data={recipeItem.nutrition}
-            renderItem={({ item }) => {
-              return (
-                <View style={styles.listItem}>
-                  <Text style={styles.listItemText}>{item}</Text>
-                </View>
-              );
-            }}
-          />
-          <FlatList
-            contentContainerStyle={styles.listContentContainer}
-            data={recipeItem.ingredients}
-            renderItem={({ item }) => {
-              return (
-                <View style={styles.listItem}>
-                  <Text style={styles.listItemText}>{item}</Text>
-                </View>
-              );
-            }}
-          />
-        </View>
-        <TouchableOpacity
-          style={styles.listItem}
-          onPress={() =>
-            navigation.navigate("recipeCheck", { recipeKey: recipeKey })
-          }
-        >
-          <Text style={styles.listItemText}>Start to Prepare!</Text>
-        </TouchableOpacity>
-      </View> */}
+      </View>
     </View>
   );
 }
@@ -218,7 +159,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imgContainer: {
-    flex: 0.2,
+    flex: 0.35,
     justifyContent: "center",
     resizeMode: "cover",
     width: 350,
@@ -227,7 +168,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   infoContainer: {
-    flex: 0.2,
+    flex: 0.15,
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
@@ -275,10 +216,44 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
   },
-  buttonrow: {
-    flex: 0.1,
+  listContainer: {
+    flex: 0.3,
     width: "100%",
-    justifyContent:"center",
-    alignItems:"center"
+    paddingBottom: 10,
+  },
+  nutritionCont: {
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    width: "100%",
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  nutrirow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  nutritionitem: {
+    flex: 0.1,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  editbutton: {
+    flex: 0.05,
+    width: "100%",
+    height: "5%",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingRight: 10,
+    paddingLeft: 10,
+  },
+  buttonstyle: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 8,
   },
 });
