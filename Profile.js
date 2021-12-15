@@ -27,7 +27,6 @@ export function ProfileScreen({ navigation, route }) {
   const [mode, setMode] = useState("view");
   const auth = getAuth();
 
-  // subscribe to updates, specifying the callback
   useEffect(() => {
     dataModel.addUserListener(async () => {
       const userinfo = await dataModel.getCurrentUserDisplayName(userkey);

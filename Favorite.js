@@ -107,6 +107,7 @@ export function FavoriteScreen({ navigation, route }) {
         <View style={styles.listContainer}>
           <FlatList
             contentContainerStyle={styles.listContentContainer}
+            keyExtractor={(item, index) => index.toString()}
             data={favlist}
             renderItem={({ item }) => {
               if (item.category === tablist[1]) {

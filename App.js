@@ -16,6 +16,7 @@ import { ProfileScreen } from './Profile';
 import { RestDetailScreen } from './ResDetail';
 import { RecipeDetailScreen } from './recipeDetail';
 import {RecipeCookScreen} from './recipeCook';
+import { CommentScreen } from './Comment';
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -94,6 +95,7 @@ export default function App() {
         <Stack.Screen name="recipeCheck" component={RecipeCheckScreen} />
         <Stack.Screen name="recipeDetail" component={RecipeDetailScreen} />
         <Stack.Screen name="recipeCook" component={RecipeCookScreen} />
+        <Stack.Screen name="comment" component={CommentScreen} />
         <Stack.Screen name="Home" component={HomeTabs} />
     </Stack.Navigator>
     </NavigationContainer>

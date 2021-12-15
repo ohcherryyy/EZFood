@@ -38,20 +38,20 @@ class DataModel {
     this.userSnapshotUnsub = undefined;
     this.userinfo = [];
     this.fav = false;
-    this.favlist=[]
+    this.favlist = [];
     this.deletekey;
     this.ressubscribers = [];
     this.recsubscribers = [];
     this.restsearchlist = [];
-    this.resdetasubscribers=[]
+    this.resdetasubscribers = [];
     this.menulist = [];
     this.showbudget = false;
     this.budgetlist = [];
     this.budgetprice = [];
-    this.commentlist=[];
-    this.like=false;
+    this.commentlist = [];
+    this.like = false;
     this.recipesearchlist = [];
-    this.ingredientslist=[]
+    this.ingredientslist = [];
     this.initUsersOnSnapshot();
     this.initResOnSnapshot();
     this.initRecipeOnSnapshot();
@@ -193,8 +193,8 @@ class DataModel {
     });
   }
 
-  getfav(){
-    return this.favlist
+  getfav() {
+    return this.favlist;
   }
 
   initfavlist(key, info) {
@@ -226,7 +226,7 @@ class DataModel {
 
   async removefav(key) {
     const q = doc(db, "users", key);
-    const favRef = doc(q, "favorite",this.deletekey);
+    const favRef = doc(q, "favorite", this.deletekey);
     if (this.deletekey) {
       await deleteDoc(favRef);
     }
@@ -235,13 +235,25 @@ class DataModel {
   //restaurant info
 
   subscribeToResUpdates(callback) {
-    this.ressubscribers.push(callback);
+    const listenerId = Date.now();
+    const listener = {
+      id: listenerId,
+      callback: callback,
+    };
+    this.ressubscribers.push(listener);
+    callback(); // have the caller check right away
+    return listenerId;
   }
 
   updateResSubscribers() {
-    for (let sub of this.ressubscribers) {
-      sub(); // just tell them there's an update
+    for (let ul of this.ressubscribers) {
+      ul.callback();
     }
+  }
+
+  removeResSubsribers(listenerId) {
+    let idx = this.ressubscribers.findIndex((elem) => elem.id === listenerId);
+    this.ressubscribers.splice(idx, 1);
   }
 
   searchRestaurants(text) {
@@ -342,20 +354,35 @@ class DataModel {
   }
 
   subscribeToResDetaUpdates(callback) {
-    this.resdetasubscribers.push(callback);
+    const listenerId = Date.now();
+    const listener = {
+      id: listenerId,
+      callback: callback,
+    };
+    this.resdetasubscribers.push(listener);
+    callback(); // have the caller check right away
+    return listenerId;
   }
 
   updateResDetaSubscribers() {
-    for (let sub of this.resdetasubscribers) {
-      sub(); // just tell them there's an update
+    for (let ul of this.resdetasubscribers) {
+      ul.callback();
     }
+  }
+
+  removeResDetaSubsribers(listenerId) {
+    let idx = this.resdetasubscribers.findIndex(
+      (elem) => elem.id === listenerId
+    );
+    this.resdetasubscribers.splice(idx, 1);
   }
 
   async getresinfo(id) {
     const resDocSnap = await getDoc(doc(db, "restaurants", id));
-    const res = resDocSnap.data();
+    var res= resDocSnap.data()
     this.updateResDetaSubscribers();
-    return res;
+    return res
+    
   }
 
   async menuOnSnapshot(id) {
@@ -389,50 +416,78 @@ class DataModel {
     return this.restsearchlist;
   }
 
-  initcomment(key,id){
+  initcomment(key, id) {
     const q = doc(db, "restaurants", key);
     const comRef = collection(q, "comment");
-    onSnapshot(comRef, (qSnap) => {
-       let comlist=[]
-        qSnap.forEach((docSnap) => {
-          let com = docSnap.data();
-          com.key = docSnap.id;
-          for (u of com.thumbs){
-            if(u===id){
-              this.like=true
-            }
-          }
-          comlist.push(com)
-        });
-     this.commentlist=comlist
+    onSnapshot(query(comRef, orderBy("time", "desc")), (qSnap) => {
+      let comlist = [];
+      qSnap.forEach((docSnap) => {
+        let com = docSnap.data();
+        com.key = docSnap.id;
+        if(com.thumbs.includes(id)){
+          com.like=true
+        }
+        else{
+          com.like=false
+        }
+        // for (u of com.thumbs) {
+        //   if (u === id) {
+        //     com.like = true;
+        //   } else {
+        //     com.like = false;
+        //   }
+        // }
+        comlist.push(com);
+      });
+      this.commentlist = comlist;
     });
-    this.updateResDetaSubscribers()
-    return this.commentlist
+    this.updateResDetaSubscribers();
+    return this.commentlist;
   }
 
-  async thumbsup(resid, comid,userkey){
+  async thumbsup(resid, comid, userkey) {
     const q = doc(db, "restaurants", resid);
-    const comRef = doc(q, "comment",comid);
-    await updateDoc(comRef,{thumbs:arrayUnion(userkey)})
-    this.updateResDetaSubscribers()
+    const comRef = doc(q, "comment", comid);
+    await updateDoc(comRef, { thumbs: arrayUnion(userkey) });
+    // this.commentlist=this.initcomment(resid,userkey)
+    this.updateResDetaSubscribers();
   }
 
-  async cancellikes(resid,comid,userkey){
+  async cancellikes(resid, comid, userkey) {
     const q = doc(db, "restaurants", resid);
-    const comRef = doc(q, "comment",comid);
-    await updateDoc(comRef,{thumbs:arrayRemove(userkey)})
-    this.updateResDetaSubscribers()
+    const comRef = doc(q, "comment", comid);
+    await updateDoc(comRef, { thumbs: arrayRemove(userkey) });
+    // this.commentlist=this.initcomment(resid,userkey)
+    this.updateResDetaSubscribers();
+  }
+
+  async updatecomment(resid, info) {
+    const q = doc(db, "restaurants", resid);
+    const comRef = collection(q, "comment");
+    await addDoc(comRef, info);
   }
 
   //recipe list
   subscribeToRecUpdates(callback) {
-    this.recsubscribers.push(callback);
+    const listenerId = Date.now();
+    const listener = {
+      id: listenerId,
+      callback: callback,
+    };
+    this.recsubscribers.push(listener);
+    callback(); // have the caller check right away
+    return listenerId;
   }
 
   updateRecSubscribers() {
-    for (let sub of this.recsubscribers) {
-      sub(); // just tell them there's an update
+    for (let ul of this.ressubscribers) {
+      ul.callback();
     }
+  }
+
+  removeResSubsribers(listenerId) {
+    let idx = this.recsubscribers.findIndex((elem) => elem.id === listenerId);
+    this.recsubscribers.splice(idx, 1);
   }
 
   initRecipeOnSnapshot() {
@@ -514,14 +569,13 @@ class DataModel {
   async setCheckStatus(recipeKey) {
     const receipeDocSnap = await getDoc(doc(db, "recipes", recipeKey));
     const recipeItem = receipeDocSnap.data();
-    const ingredients = recipeItem.ingredients
-   
-    this.ingredientslist = this.getingredient(ingredients)
-    console.log(this.ingredientslist)
-    this.updateRecSubscribers()
-    return this.ingredientslist
-  }
+    const ingredients = recipeItem.ingredients;
 
+    this.ingredientslist = this.getingredient(ingredients);
+    console.log(this.ingredientslist);
+    this.updateRecSubscribers();
+    return this.ingredientslist;
+  }
 
   getingredient(ingredients) {
     var ingredientsList = [];
@@ -531,23 +585,26 @@ class DataModel {
     //   ingredientsStatus["checkStatus"] = false
     //   ingredientsList.push(ingredientsStatus)
     // };
-    for(let i=0;i<ingredients.length;i++){
-      ingredientsList.push({key:i,ingre:ingredients[i],checkStatus:false})
+    for (let i = 0; i < ingredients.length; i++) {
+      ingredientsList.push({
+        key: i,
+        ingre: ingredients[i],
+        checkStatus: false,
+      });
     }
     return ingredientsList;
-  }  
+  }
 
-  setCheck(key){
-    for (let u of this.ingredientslist){
-      if(u.ingre===key){
-        u.checkStatus=!u.checkStatus
-        this.updateRecSubscribers()
-         console.log(u.checkStatus)
-        return u.checkStatusx
+  setCheck(key) {
+    for (let u of this.ingredientslist) {
+      if (u.ingre === key) {
+        u.checkStatus = !u.checkStatus;
+        this.updateRecSubscribers();
+        console.log(u.checkStatus);
+        return u.checkStatusx;
       }
     }
   }
-
 }
 
 let theDataModel = undefined;
