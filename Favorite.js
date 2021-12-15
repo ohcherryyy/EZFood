@@ -200,9 +200,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     flexDirection: "row",
-    resizeMode: "center",
+    resizeMode: "cover",
     width: 100,
-    height: 100,
+    height: 60,
+    borderRadius: 8,
   },
   listItemCont: {
     flex: 0.8,

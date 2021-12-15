@@ -15,7 +15,7 @@ import { List } from "react-native-paper";
 
 export function RecipeCookScreen({ navigation, route }) {
   const dataModel = getDataModel();
-  const { recipeKey } = route.params;
+  const { recipeKey,currentUserId } = route.params;
   const [recipeItem, setRecipeItem] = useState(["Default"]);
 
   useEffect(async () => {
@@ -35,14 +35,7 @@ export function RecipeCookScreen({ navigation, route }) {
         </View>
         <View style={styles.titleButton}></View>
       </View>
-      <View style={styles.itemImage}>
-        <Image
-          style={styles.imagestyle}
-          source={{
-            uri: recipeItem.image,
-          }}
-        />
-      </View>
+      <Image style={styles.imgContainer} source={{ uri: recipeItem.image }} />
       <View style={styles.listItemCont}>
         <List.AccordionGroup>
           <FlatList
@@ -59,17 +52,18 @@ export function RecipeCookScreen({ navigation, route }) {
           />
         </List.AccordionGroup>
       </View>
-      <TouchableOpacity
-        style={styles.listItem}
-        onPress={() =>
-          navigation.navigate("Home", {
-            
-            screen: "Recipe",
-          })
-        }
-      >
-        <Text style={styles.listItemText}>Finish!</Text>
-      </TouchableOpacity>
+      <View style={styles.editbutton}>
+        <TouchableOpacity
+          style={styles.buttonstyle}
+          onPress={() =>
+            navigation.navigate("Home", {params: { currentUserId: currentUserId },
+              
+            })
+          }
+        >
+          <Text style={styles.listItemText}>Finish!</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -100,31 +94,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  itemImage: {
-    flex: 0.15,
+  imgContainer: {
+    flex: 0.2,
     justifyContent: "center",
-    alignItems: "center",
-  },
-  imagestyle: {
-    resizeMode: "center",
-    paddingBottom: 30,
-    width: 2000,
-    height: 2000,
+    resizeMode: "cover",
+    width: 350,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 20,
   },
 
   listItemCont: {
     flex: 0.5,
     width: "100%",
+    paddingLeft: 10,
+    paddingRight: 10,
   },
-  listItemText: {
-    flex: 0.5,
-    fontSize: 18,
-  },
-  listItem: {
-    flex: 0.1,
-    justifyContent: "flex-start",
+  editbutton: {
+    flex: 0.05,
+    width: "100%",
+    height: "5%",
+    justifyContent: "center",
     alignItems: "center",
-    flexDirection: "row",
-    padding: 5,
+    paddingRight: 10,
+    paddingLeft: 10,
+  },
+  buttonstyle: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 8,
   },
 });

@@ -430,13 +430,6 @@ class DataModel {
         else{
           com.like=false
         }
-        // for (u of com.thumbs) {
-        //   if (u === id) {
-        //     com.like = true;
-        //   } else {
-        //     com.like = false;
-        //   }
-        // }
         comlist.push(com);
       });
       this.commentlist = comlist;
@@ -572,9 +565,12 @@ class DataModel {
     const ingredients = recipeItem.ingredients;
 
     this.ingredientslist = this.getingredient(ingredients);
-    console.log(this.ingredientslist);
     this.updateRecSubscribers();
-    return this.ingredientslist;
+    // return this.ingredientslist;
+  }
+
+  getingredientlist(){
+    return this.ingredientslist
   }
 
   getingredient(ingredients) {
@@ -601,7 +597,7 @@ class DataModel {
         u.checkStatus = !u.checkStatus;
         this.updateRecSubscribers();
         console.log(u.checkStatus);
-        return u.checkStatusx;
+        // return u.checkStatusx;
       }
     }
   }

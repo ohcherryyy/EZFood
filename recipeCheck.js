@@ -16,13 +16,15 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 export function RecipeCheckScreen({ navigation, route }) {
   const dataModel = getDataModel();
-  const { recipeKey } = route.params;
+  const { recipeKey,currentUserId } = route.params;
   const [ingredients, setIngredients] = useState(["Default"]);
+  const [change,setchange]=useState(false)
 
   useEffect(async () => {
-    setIngredients(await dataModel.setCheckStatus(recipeKey));
+    await dataModel.setCheckStatus(recipeKey)
+    setIngredients(dataModel.getingredientlist());
   }, []);
-
+  
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
@@ -32,43 +34,44 @@ export function RecipeCheckScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
         <View style={styles.titleitem}>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-            Ingredients
-          </Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Ingredients</Text>
         </View>
-        <View style={styles.titleButton}>
-          
-        </View>
+        <View style={styles.titleButton}></View>
       </View>
 
       <View style={styles.listContainer}>
-      <FlatList
-          contentContainerStyle={styles.listContentContainer}
+        <FlatList
+          contentContainerStyle={styles.nutritionCont}
           data={ingredients}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({item})=>{
-           // console.log(item.checkStatus)
-          
+          extraData={change}
+          renderItem={({ item }) => {
             return (
-            <View style={styles.listItem}>
-              <CheckBox
-                checked={item.CheckStatus}
-                onPress={() => dataModel.setCheck(item.ingre)}
-              />
-              <Text style={styles.listItemText}>{item.ingre}</Text>
-            </View>
-            );}
-            
-          }
+              <View style={styles.nutritionitem}>
+                <CheckBox
+                  containerStyle={{ padding: 0 }}
+                  checked={item.checkStatus}
+                  onPress={() => {
+                    dataModel.setCheck(item.ingre);
+                    setchange(!change)
+                  }}
+                />
+                <Text style={{ fontSize: 17 }}>{item.ingre}</Text>
+              </View>
+            );
+          }}
         />
-        
       </View>
-      <TouchableOpacity
-          style={styles.listItem}
-          onPress={() => navigation.navigate("recipeCook", {recipeKey: recipeKey})}
+      <View style={styles.editbutton}>
+        <TouchableOpacity
+          style={styles.buttonstyle}
+          onPress={() =>
+            navigation.navigate("recipeCook", { recipeKey: recipeKey, currentUserId:currentUserId})
+          }
         >
-            <Text style={styles.listItemText}>Start to Cook!</Text>
+          <Text style={styles.listItemText}>Start to Cook!</Text>
         </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -106,36 +109,45 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   listContainer: {
-    flex: 0.5,
+    flex: 0.8,
     paddingBottom: 30,
     paddingLeft: 30,
     paddingRight: 30,
     width: "100%",
   },
-  listContentContainer: {
+  nutritionCont: {
     justifyContent: "flex-start",
+    alignItems: "flex-start",
+    width: "100%",
+    paddingLeft: 10,
+    paddingRight: 10,
   },
-  listItem: {
+  nutrirow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  nutritionitem: {
     flex: 0.1,
+    flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    flexDirection: "row",
-    padding: 5,
   },
-  listItemText: {
-    flex: 0.5,
-    fontSize: 18,
+  editbutton: {
+    flex: 0.05,
+    width: "100%",
+    height: "5%",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingRight: 10,
+    paddingLeft: 10,
   },
-  PrioItemText: {
-    flex: 0.2,
-  },
-  listItemButtons: {
-    flex: 0.3,
-    flexDirection: "row",
-  },
-  menuContainer: {
-    backgroundColor: "rgba(0.5, 0.25, 0, 0.2)",
-    flexDirection: "column",
-    justifyContent: "flex-end",
+  buttonstyle: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 8,
   },
 });
