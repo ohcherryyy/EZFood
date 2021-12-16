@@ -50,6 +50,14 @@ export function RestaurantScreen({ navigation, route }) {
           }}
         />
       </View>
+      <TouchableOpacity
+        style={styles.listItem}
+        onPress={() =>
+          navigation.navigate("ResMap")
+        }
+      >
+        <Text>Map View</Text>
+      </TouchableOpacity>
       <View style={styles.filtercontainer}>
         <View style={styles.filterItem}>
           <View style={styles.filterTitle}>

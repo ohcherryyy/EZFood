@@ -308,7 +308,7 @@ class DataModel {
         let res = docSnap.data();
         res.key = docSnap.id;
         if (this.showbudget) {
-          for (u of this.budgetlist) {
+          for (let u of this.budgetlist) {
             if (res.key === u) {
               resList.push(res);
             }
@@ -332,7 +332,7 @@ class DataModel {
   }
 
   budgetRes(i) {
-    bug = this.budgetprice[i];
+    let bug = this.budgetprice[i];
     var q = query(collection(db, "menu"), where("price", "<=", bug));
     onSnapshot(q, (qSnap) => {
       let reslist = [];
@@ -402,7 +402,7 @@ class DataModel {
 
   comparemenu(menulist) {
     var nowlsist = this.menulist;
-    for (u of menulist) {
+    for (let u of menulist) {
       if (nowlsist.includes(u.key)) {
         u.req = true;
       } else {
