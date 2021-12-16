@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { getDataModel } from "./DataModel";
 import { SearchBar } from "react-native-elements";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 export function RestaurantScreen({ navigation, route }) {
   const dataModel = getDataModel();
@@ -23,7 +24,7 @@ export function RestaurantScreen({ navigation, route }) {
   const userkey = dataModel.getUserForID(currentUserId);
   // console.log("initial")
   // console.log(userkey)
-  dataModel.getBudget(userkey?userkey:currentUserId);
+  dataModel.getBudget(userkey ? userkey : currentUserId);
   const [search, setSearch] = useState("");
   const [reslist, setReslist] = useState(dataModel.getRes());
   const [budget, setBudget] = useState(dataModel.getshowbudget());
@@ -49,15 +50,16 @@ export function RestaurantScreen({ navigation, route }) {
             setSearch(value);
           }}
         />
+        <View style={styles.mapstyle}>
+          <TouchableOpacity
+            
+            onPress={() => navigation.navigate("ResMap")}
+          >
+            <MaterialCommunityIcons name="map" size={25} color={"#1a0ec2"}/>
+          </TouchableOpacity>
+        </View>
       </View>
-      <TouchableOpacity
-        style={styles.listItem}
-        onPress={() =>
-          navigation.navigate("ResMap")
-        }
-      >
-        <Text>Map View</Text>
-      </TouchableOpacity>
+
       <View style={styles.filtercontainer}>
         <View style={styles.filterItem}>
           <View style={styles.filterTitle}>
@@ -65,13 +67,25 @@ export function RestaurantScreen({ navigation, route }) {
           </View>
           <View style={styles.filterCont}>
             <TouchableOpacity onPress={() => setmeal(0)}>
-              <Text style={meal===0?{color:"#1a0ec2"}:{color:"black"}}>Breakfast</Text>
+              <Text
+                style={meal === 0 ? { color: "#1a0ec2" } : { color: "black" }}
+              >
+                Breakfast
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setmeal(1)}>
-              <Text style={meal===1?{color:"#1a0ec2"}:{color:"black"}}>Lunch</Text>
+              <Text
+                style={meal === 1 ? { color: "#1a0ec2" } : { color: "black" }}
+              >
+                Lunch
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setmeal(2)}>
-              <Text style={meal===2?{color:"#1a0ec2"}:{color:"black"}}>Dinner</Text>
+              <Text
+                style={meal === 2 ? { color: "#1a0ec2" } : { color: "black" }}
+              >
+                Dinner
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -154,7 +168,13 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   searchbarstyle: {
-    flex: 1,
+    flex: 0.9,
+    width: "100%",
+    backgroundColor: "#fff",
+    borderColor: "#fff",
+  },
+  mapstyle: {
+    flex: 0.1,
     width: "100%",
     backgroundColor: "#fff",
     borderColor: "#fff",
