@@ -1,11 +1,15 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { MapView, Marker, Callout} from "react-native-maps";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import MapView from "react-native-maps";
+import { Marker, Callout } from 'react-native-maps';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { getDataModel } from "./DataModel";
 
 export function RestMapScreen({ navigation, route }) {
 
-    const { resList } = route.params;
+    const dataModel = getDataModel();
+    const { reslist } = route.params;
+    console.log(reslist);
     const { currentUserId } = route.params;
     const userkey = dataModel.getUserForID(currentUserId);
 
@@ -32,9 +36,9 @@ export function RestMapScreen({ navigation, route }) {
                     longitudeDelta: 0.0421
                 }}
             >
-                {resList.map((marker, index) => (
+                {reslist.map((marker) => (
                     <Marker
-                    key={index}
+                    key={marker.key}
                     coordinate={{latitude: marker.location['latitude'], longitude: marker.location['longitude']}}
                     title={marker.name}
                     >
