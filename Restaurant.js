@@ -53,13 +53,12 @@ export function RestaurantScreen({ navigation, route }) {
         <View style={styles.mapstyle}>
           <TouchableOpacity
             
-            onPress={() => navigation.navigate("ResMap")}
+            onPress={() => navigation.navigate("ResMap", {reslist: reslist, currentUserId: userkey})}
           >
             <MaterialCommunityIcons name="map" size={25} color={"#1a0ec2"}/>
           </TouchableOpacity>
         </View>
       </View>
-
       <View style={styles.filtercontainer}>
         <View style={styles.filterItem}>
           <View style={styles.filterTitle}>
