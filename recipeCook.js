@@ -1,4 +1,3 @@
-import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import {
   TextInput,
@@ -8,23 +7,21 @@ import {
   TouchableOpacity,
   StyleSheet,
   Button,
+  Image,
 } from "react-native";
-
-import { CheckBox } from "react-native-elements";
 import { getDataModel } from "./DataModel";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { List } from "react-native-paper";
 
-export function RecipeCheckScreen({ navigation, route }) {
+export function RecipeCookScreen({ navigation, route }) {
   const dataModel = getDataModel();
   const { recipeKey,currentUserId } = route.params;
-  const [ingredients, setIngredients] = useState(["Default"]);
-  const [change,setchange]=useState(false)
+  const [recipeItem, setRecipeItem] = useState(["Default"]);
 
   useEffect(async () => {
-    await dataModel.setCheckStatus(recipeKey)
-    setIngredients(dataModel.getingredientlist());
+    setRecipeItem(await dataModel.getRecipeKey(recipeKey));
   }, []);
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
@@ -34,48 +31,42 @@ export function RecipeCheckScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
         <View style={styles.titleitem}>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Ingredients</Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Instructions</Text>
         </View>
         <View style={styles.titleButton}></View>
       </View>
-
-      <View style={styles.listContainer}>
-        <FlatList
-          contentContainerStyle={styles.nutritionCont}
-          data={ingredients}
-          keyExtractor={(item, index) => index.toString()}
-          extraData={change}
-          renderItem={({ item }) => {
-            return (
-              <View style={styles.nutritionitem}>
-                <CheckBox
-                  containerStyle={{ padding: 0 }}
-                  checked={item.checkStatus}
-                  onPress={() => {
-                    dataModel.setCheck(item.ingre);
-                    setchange(!change)
-                  }}
-                />
-                <Text style={{ fontSize: 17 }}>{item.ingre}</Text>
-              </View>
-            );
-          }}
-        />
+      <Image style={styles.imgContainer} source={{ uri: recipeItem.image }} />
+      <View style={styles.listItemCont}>
+        <List.AccordionGroup>
+          <FlatList
+            contentContainerStyle={styles.listContentContainer}
+            data={recipeItem.instructions}
+            renderItem={({ index, item }) => {
+              let step = index + 1;
+              return (
+                <List.Accordion title={"Step " + step} id={step}>
+                  <List.Item title={item} titleNumberOfLines={10} />
+                </List.Accordion>
+              );
+            }}
+          />
+        </List.AccordionGroup>
       </View>
       <View style={styles.editbutton}>
         <TouchableOpacity
           style={styles.buttonstyle}
           onPress={() =>
-            navigation.navigate("recipeCook", { recipeKey: recipeKey, currentUserId:currentUserId})
+            navigation.navigate("Home", {params: { currentUserId: currentUserId },
+              
+            })
           }
         >
-          <Text style={styles.listItemText}>Start to Cook!</Text>
+          <Text style={styles.listItemText}>Finish!</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -103,34 +94,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  settingContainer: {
-    paddingTop: 10,
-    justifyContent: "flex-start",
-    alignItems: "center",
+  imgContainer: {
+    flex: 0.2,
+    justifyContent: "center",
+    resizeMode: "cover",
+    width: 350,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 20,
   },
-  listContainer: {
-    flex: 0.8,
-    paddingBottom: 30,
-    paddingLeft: 30,
-    paddingRight: 30,
-    width: "100%",
-  },
-  nutritionCont: {
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
+
+  listItemCont: {
+    flex: 0.5,
     width: "100%",
     paddingLeft: 10,
     paddingRight: 10,
-  },
-  nutrirow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  nutritionitem: {
-    flex: 0.1,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
   },
   editbutton: {
     flex: 0.05,

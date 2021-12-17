@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Alert } from "react-native";
-import CheckCircleOutlined from "@ant-design/icons";
 import {
   TextInput,
   Text,
@@ -12,24 +10,129 @@ import {
   Image,
 } from "react-native";
 import { getDataModel } from "./DataModel";
+import { SearchBar } from "react-native-elements";
 
 export function RecipeScreen({ navigation, route }) {
   const dataModel = getDataModel();
-    const { userId } = route.params;
-    const userkey = dataModel.getUserForID(userId);
+  const { currentUserId } = route.params;
+  const userkey = dataModel.getUserForID(currentUserId);
   const [search, setSearch] = useState("");
   const [reclist, setReclist] = useState(dataModel.getRecipes());
+  const [cooktime, setCooktime] = useState("");
+  const [filtershow, setfiltershow] = useState(false);
 
   useEffect(() => {
-    dataModel.subscribeToUpdates(() => {
+    dataModel.subscribeToRecUpdates(() => {
       setReclist(dataModel.getRecipes());
     });
   });
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchbar}></View>
-      <View style={styles.listContainer}>
+      <View style={styles.searchbar}>
+        <SearchBar
+          containerStyle={styles.searchbarstyle}
+          placeholder="Find your recipe"
+          platform="ios"
+          value={search}
+          onChangeText={(value) => {
+            dataModel.searchRecipes(value);
+            setSearch(value);
+          }}
+        />
+      </View>
+      <View style={styles.filtercontainer}>
+        <View style={styles.filterItem}>
+          <TouchableOpacity onPress={() => setfiltershow(!filtershow)}>
+            <Text style={styles.filtertext}>Cook time</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.filterItem}>
+          <TouchableOpacity onPress={() => setfiltershow(!filtershow)}>
+            <Text style={styles.filtertext}>Category</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.filterItem}>
+          <TouchableOpacity onPress={() => setfiltershow(!filtershow)}>
+            <Text style={styles.filtertext}>Rating</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      {filtershow ? (
+        <View style={styles.filterCont}>
+          <View style={styles.filterOption}>
+            <TouchableOpacity onPress={() => dataModel.initRecipeOnSnapshot()}>
+              <Text style={styles.filterOptionItem}>All</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => dataModel.filterRecipes("cooktime", 1, 30)}
+            >
+              <Text style={styles.filterOptionItem} color="red">
+                0-30 min
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => dataModel.filterRecipes("cooktime", 30, 60)}
+            >
+              <Text style={styles.filterOptionItem}>30-60 min</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => dataModel.filterRecipes("cooktime", 60, null)}
+            >
+              <Text style={styles.filterOptionItem}>60 min</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.filterOption}>
+            <TouchableOpacity onPress={() => dataModel.initRecipeOnSnapshot()}>
+              <Text style={styles.filterOptionItem}>All</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                dataModel.filterRecipes("mealtype", null, "appetizers")
+              }
+            >
+              <Text style={styles.filterOptionItem}>Appetizers</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                dataModel.filterRecipes("mealtype", null, "main dish")
+              }
+            >
+              <Text style={styles.filterOptionItem}>Main dish</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                dataModel.filterRecipes("mealtype", null, "dessert")
+              }
+            >
+              <Text style={styles.filterOptionItem}>Desserts</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.filterOption}>
+            <TouchableOpacity onPress={() => dataModel.initRecipeOnSnapshot()}>
+              <Text style={styles.filterOptionItem}>All</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => dataModel.filterRecipes("rating", 4, 5)}
+            >
+              <Text style={styles.filterOptionItem}>4-5</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => dataModel.filterRecipes("rating", 2, 4)}
+            >
+              <Text style={styles.filterOptionItem}>2-4</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => dataModel.filterRecipes("rating", 0, 2)}
+            >
+              <Text style={styles.filterOptionItem}>0-2</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : null}
+      <View
+        style={filtershow ? styles.listContainerexpand : styles.listContainer}
+      >
         <FlatList
           contentContainerStyle={styles.listContentContainer}
           data={reclist}
@@ -37,7 +140,12 @@ export function RecipeScreen({ navigation, route }) {
             return (
               <TouchableOpacity
                 style={styles.listItem}
-                // onPress={() => navigation.navigate("Restaurant")}
+                onPress={() =>
+                  navigation.navigate("recipeDetail", {
+                    recipeKey: item.key,
+                    currentUserId: userkey,
+                  })
+                }
               >
                 <Image
                   style={styles.listItemimgContainer}
@@ -46,7 +154,9 @@ export function RecipeScreen({ navigation, route }) {
                   }}
                 />
                 <View style={styles.listItemCont}>
-                  <Text style={styles.listItemContTitle}>{item.name}</Text>
+                  <Text numberOfLines={100} style={styles.listItemContTitle}>
+                    {item.name}
+                  </Text>
                   <View style={styles.listItemConDetail}>
                     <Text style={styles.listItemText}>{item.cooktime}min</Text>
                     <Text style={styles.listItemText}>{item.mealtype} </Text>
@@ -66,14 +176,76 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    paddingTop: 50,
   },
   searchbar: {
-    flex: 0.2,
+    flex: 0.05,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    paddingTop: 30,
+    paddingBottom: -20,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  searchbarstyle: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "#fff",
+    borderColor: "#fff",
+  },
+  //   filter: {
+  //     flex: 0.1,
+  //     width: "100%",
+  //     flexDirection: "column",
+  //     alignItems: "center",
+  //     justifyContent: "center",
+  //   },
+  filtercontainer: {
+    flex: 0.1,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  filterItem: {
+    flex: 0,
+  },
+  filtertext: {
+    fontSize: 15,
+  },
+  filterCont: {
+    flex: 0.1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    paddingLeft: 25,
+    paddingRight: 0,
+    width: "100%",
+  },
+  filterOption: {
+    flex: 0.4,
+    justifyContent: "center",
+    alignItems: "flex-start",
+    flexDirection: "column",
+  },
+  filterOptionItem: {
+    fontSize: 15,
+  },
+
+  listContainerexpand: {
+    flex: 0.75,
+    paddingTop: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    width: "100%",
   },
   listContainer: {
-    flex: 0.8,
-    paddingBottom: 30,
+    flex: 0.85,
+    paddingTop: 20,
     paddingLeft: 20,
     paddingRight: 20,
     width: "100%",
@@ -95,9 +267,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     flexDirection: "row",
-    resizeMode: "center",
+    resizeMode: "cover",
     width: 100,
-    height: 100,
+    height: 70,
+    borderRadius: 8,
   },
   listItemCont: {
     flex: 0.8,
@@ -107,12 +280,12 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   listItemContTitle: {
-    flex: 0.4,
+    flex: 0.7,
     fontSize: 18,
     fontWeight: "bold",
   },
   listItemConDetail: {
-    flex: 0.4,
+    flex: 0.3,
     justifyContent: "flex-start",
     alignItems: "center",
     flexDirection: "row",
