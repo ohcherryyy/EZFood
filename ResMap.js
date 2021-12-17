@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Callout, MapView, Marker} from "react-native-maps";
+import { MapView, Marker, Callout} from "react-native-maps";
 
 export function RestMapScreen({ navigation, route }) {
 
