@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 50,
+    paddingTop: 30,
   },
   searchbar: {
     flex: 0.05,
