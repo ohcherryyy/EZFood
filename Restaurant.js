@@ -53,7 +53,7 @@ export function RestaurantScreen({ navigation, route }) {
       <TouchableOpacity
         style={styles.listItem}
         onPress={() =>
-          navigation.navigate("ResMap")
+          navigation.navigate("ResMap", {reslist: reslist, currentUserId: userkey})
         }
       >
         <Text>Map View</Text>
